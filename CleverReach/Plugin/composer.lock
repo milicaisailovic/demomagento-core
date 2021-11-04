@@ -4,15 +4,59 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8bebcb85b2f6ab78f705334164070bb9",
-    "packages": [],
+    "content-hash": "f093850c800e87594f84086fdf281e9d",
+    "packages": [
+        {
+            "name": "cleverreach/integration-core",
+            "version": "v3.3.2",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:cleverreach/logeecore.git",
+                "reference": "68c5f57b1b7d34027bcd93c8a733645d6a2f3d06"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/cleverreach/logeecore/zipball/68c5f57b1b7d34027bcd93c8a733645d6a2f3d06",
+                "reference": "68c5f57b1b7d34027bcd93c8a733645d6a2f3d06",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.29"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.8"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Logeecom\\Infrastructure\\": "src/Infrastructure",
+                    "CleverReach\\BusinessLogic\\": "src/BusinessLogic"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Logeecom\\Tests\\Infrastructure\\": "tests/Infrastructure",
+                    "CleverReach\\Tests\\BusinessLogic\\": "tests/BusinessLogic"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "description": "CleverReach integrations core library",
+            "time": "2021-07-27T11:04:58+00:00"
+        }
+    ],
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
+    "platform": {
+        "php": ">=5.4",
+        "ext-json": "*",
+        "ext-dom": "*"
+    },
     "platform-dev": [],
     "plugin-api-version": "2.1.0"
 }
