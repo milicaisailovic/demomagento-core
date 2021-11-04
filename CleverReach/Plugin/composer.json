@@ -1,0 +1,16 @@
+{
+    "name": "cleverreach/plugin",
+    "type": "magento2-module",
+    "autoload": {
+        "psr-4": {
+            "CleverReach\\Plugin\\": ""
+        }
+    },
+    "authors": [
+        {
+            "name": "Milica Isailovic",
+            "email": "milica.isailovic@logeecom.com"
+        }
+    ],
+    "require": {}
+}
