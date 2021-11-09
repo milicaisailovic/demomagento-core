@@ -2,3 +2,6 @@
 prepare-validate.sh
 magento-coding-standard
 CleverReach/Plugin/vendor
+CleverReach/Plugin/IntegrationCore
+CleverReach/Plugin/Controller/Test
+CleverReach/Plugin/Script

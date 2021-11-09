@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="CleverReach_Plugin::cleverreach"
+             title="CleverReach"
+             translate="title"
+             module="CleverReach_Plugin"
+             parent="Magento_Backend::marketing"
+             sortOrder="50"
+             dependsOnModule="CleverReach_Plugin"
+             resource="CleverReach_Plugin::cleverreach"
+        />
+        <add id="CleverReach_Plugin::cleverreach_login"
+             title="Login"
+             translate="title"
+             module="CleverReach_Plugin"
+             parent="CleverReach_Plugin::cleverreach"
+             sortOrder="10"
+             dependsOnModule="CleverReach_Plugin"
+             action="cleverreach/login"
+             resource="CleverReach_Plugin::cleverreach"
+        />
+    </menu>
+</config>

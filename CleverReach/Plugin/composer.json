@@ -1,28 +1,32 @@
 {
-    "name": "cleverreach/plugin",
-    "type": "magento2-module",
-    "autoload": {
-        "psr-4": {
-            "CleverReach\\Plugin\\": ""
-        }
-    },
-    "authors": [
-        {
-            "name": "Milica Isailovic",
-            "email": "milica.isailovic@logeecom.com"
-        }
-    ],
-    "repositories": [
-        {
-            "type": "vcs",
-            "no-api": true,
-            "url": "git@github.com:cleverreach/logeecore.git"
-        }
-    ],
-    "require": {
-        "php": ">=5.4",
-        "cleverreach/integration-core": "3.3.2",
-        "ext-json": "*",
-        "ext-dom": "*"
+  "name": "cleverreach/plugin",
+  "type": "magento2-module",
+  "autoload": {
+    "psr-4": {
+      "CleverReach\\Plugin\\": ""
     }
+  },
+  "authors": [
+    {
+      "name": "Milica Isailovic",
+      "email": "milica.isailovic@logeecom.com"
+    }
+  ],
+  "repositories": [
+    {
+      "type": "vcs",
+      "no-api": true,
+      "url": "git@github.com:cleverreach/logeecore.git"
+    }
+  ],
+  "require": {
+    "php": ">=5.4",
+    "cleverreach/integration-core": "3.3.2",
+    "ext-json": "*",
+    "ext-dom": "*"
+  },
+  "scripts": {
+    "post-update-cmd": "CleverReach\\Plugin\\Script\\Core::postUpdate",
+    "post-install-cmd": "CleverReach\\Plugin\\Script\\Core::postUpdate"
+  }
 }
