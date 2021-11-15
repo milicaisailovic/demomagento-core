@@ -1,0 +1,61 @@
+.landingPage {
+    display: flex;
+    flex-direction: column;
+    border: solid gray;
+    width: 60vw;
+    margin-left: 290px;
+}
+
+.cleverreachLogo {
+    padding: 2vw;
+    width: 30vw;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-self: center;
+    border: solid gray;
+    width: 25vw;
+    margin-bottom: 5vw;
+}
+
+.title {
+    display: flex;
+    justify-content: center;
+    font-size: x-large;
+    font-weight: bolder;
+    margin-top: 1vw;
+}
+
+.iconStartMailing {
+    width: 25vw;
+}
+
+.textField {
+    display: flex;
+    justify-content: center;
+    align-self: center;
+    width: 16vw;
+    margin-top: 1vw;
+    text-align: center;
+    font-size: medium;
+}
+
+.connectButton {
+    border-radius: 12px;
+    background-color: #DE5019F4;
+    color: white;
+    width: 15vw;
+    font-size: large;
+    margin-bottom: 1.5vw;
+    height: 3vw;
+}
+
+.buttonDiv {
+    display: flex;
+    justify-content: center;
+    align-self: center;
+    margin-top: 1vw;
+}

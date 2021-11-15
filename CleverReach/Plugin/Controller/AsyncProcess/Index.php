@@ -30,6 +30,9 @@ class Index extends Action
     )
     {
         parent::__construct($context);
+
+        Bootstrap::init();
+
         $this->resultJsonFactory = $resultJsonFactory;
     }
 
@@ -38,8 +41,6 @@ class Index extends Action
      */
     public function execute()
     {
-        Bootstrap::init();
-
         $guid = $this->getRequest()->getParam('guid');
         if (!$guid) {
             $result = $this->resultJsonFactory->create();
@@ -62,8 +63,9 @@ class Index extends Action
     /**
      * @return AsyncProcessStarterService
      */
-    private function getAsyncProcessService()
+    private function getAsyncProcessService(): AsyncProcessStarterService
     {
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
         return ServiceRegister::getService(AsyncProcessService::CLASS_NAME);
     }
 }

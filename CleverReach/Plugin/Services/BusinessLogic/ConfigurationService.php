@@ -3,7 +3,6 @@
 namespace CleverReach\Plugin\Services\BusinessLogic;
 
 use CleverReach\Plugin\IntegrationCore\BusinessLogic\Configuration\Configuration;
-use Magento\Framework\Url as FrontUrl;
 
 class ConfigurationService extends Configuration
 {
@@ -37,7 +36,7 @@ class ConfigurationService extends Configuration
      */
     public function getAsyncProcessUrl($guid): string
     {
-        return $this->getSystemUrl() . 'front/asyncprocess/index?guid=' . $guid . '&XDEBUG_SESSION_START=debug';
+        return $this->getSystemUrl() . 'front/asyncprocess/index?guid=' . $guid;
     }
 
     /**
@@ -57,7 +56,7 @@ class ConfigurationService extends Configuration
      */
     public function getClientId(): string
     {
-        return 'KTQU4DAiIP';
+        return 'CFkMVkzRPM';
     }
 
     /**
@@ -77,6 +76,6 @@ class ConfigurationService extends Configuration
      */
     public function getClientSecret(): string
     {
-        return 'NJt4E04YfitFoc2eXTIYe6uCQTbmtE5y';
+        return 'SNfWYY6lkdgxevBzCuq752MqOHKozzar';
     }
 }

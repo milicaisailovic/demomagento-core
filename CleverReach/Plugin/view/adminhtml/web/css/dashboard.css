@@ -1,0 +1,34 @@
+.top {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.status {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    font-size: large;
+    align-self: center;
+    margin-top: 3vw;
+    margin-bottom: 3vw;
+    width: 10vw;
+    font-weight: bold;
+}
+
+.statusDone {
+    color: forestgreen;
+}
+
+.statusProgress {
+    color: #DE5019F4;
+}
+
+.statusError {
+    color: red;
+}
+
+.clientId {
+    margin: 3vw;
+    font-size: x-large;
+}

@@ -1,0 +1,29 @@
+<?php
+/**
+ * @var $block
+ */
+?>
+<div class="landingPage">
+    <div class="cleverreachLogo">
+        <img src="<?= $this->getViewFileUrl('CleverReach_Plugin::images/cleverreach.png'); ?>"/>
+    </div>
+    <div class="content">
+        <div>
+            <img src="<?= $this->getViewFileUrl('CleverReach_Plugin::images/icon_quickstartmailing.svg'); ?>"
+                 class="iconStartMailing"/>
+        </div>
+        <div class="title">
+            Welcome to CleverReach
+        </div>
+        <div class="textField">
+            Connect, sync customer data and create appealing emails to showcase your products to your customers.
+        </div>
+        <div class="buttonDiv">
+            <button class="connectButton"
+                    onclick="openCleverReachPopUp('<?= $block->escapeHtml($block->getLoginPageUrl()); ?>',
+                            '<?= $block->escapeHtml($block->checkLoginUrl()); ?>')"
+            > Connect
+            </button>
+        </div>
+    </div>
+</div>

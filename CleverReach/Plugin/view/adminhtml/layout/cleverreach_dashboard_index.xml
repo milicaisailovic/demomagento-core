@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <css src="CleverReach_Plugin::css/landingPage.css"/>
+        <css src="CleverReach_Plugin::css/dashboard.css"/>
+        <script src="CleverReach_Plugin::js/AjaxService.js"/>
+        <script src="CleverReach_Plugin::js/Synchronization.js"/>
+    </head>
+    <body>
+        <referenceContainer name="content">
+            <block class="CleverReach\Plugin\Block\DashboardBlock"
+                   name="dashboardBlock"
+                   template="CleverReach_Plugin::dashboard.phtml"
+            />
+        </referenceContainer>
+    </body>
+</page>

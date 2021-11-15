@@ -1,0 +1,25 @@
+<?php
+/**
+ * @var $block
+ */
+?>
+<div class="landingPage">
+    <div class="top">
+        <div class="cleverreachLogo">
+            <img src="<?= $this->getViewFileUrl('CleverReach_Plugin::images/cleverreach.png'); ?>"/>
+        </div>
+        <div class="clientId">
+            Client ID: <?= $block->getClientId() ?>
+        </div>
+    </div>
+    <div class="status">
+        <div>Sync Status:</div>
+        <div class="statusProgress" id="statusValue">In progress</div>
+    </div>
+    <div class="buttonDiv">
+        <button class="connectButton" onclick="manualSync()"> Synchronize</button>
+    </div>
+</div>
+<!--<script>-->
+<!--    window.onload = initialSync();-->
+<!--</script>-->
