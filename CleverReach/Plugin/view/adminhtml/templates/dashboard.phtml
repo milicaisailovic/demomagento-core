@@ -20,6 +20,8 @@
         <button class="connectButton" onclick="manualSync()"> Synchronize</button>
     </div>
 </div>
-<!--<script>-->
-<!--    window.onload = initialSync();-->
-<!--</script>-->
+<input type="hidden" value="<?= $block->getSynchronizationUrl(); ?>" id="syncUrl">
+<input type="hidden" value="<?= $block->getInitialSyncStatusUrl(); ?>" id="checkInitialSyncUrl">
+<script>
+    window.onload = initialSync();
+</script>
