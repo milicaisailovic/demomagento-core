@@ -11,7 +11,7 @@ use Magento\Framework\App\Action\HttpGetActionInterface;
 use Magento\Framework\Controller\Result\Json;
 use Magento\Framework\Controller\Result\JsonFactory;
 
-class CheckInitialSyncStatus extends Action implements HttpGetActionInterface
+class CheckSyncStatus extends Action implements HttpGetActionInterface
 {
     /**
      * @var JsonFactory
@@ -19,7 +19,7 @@ class CheckInitialSyncStatus extends Action implements HttpGetActionInterface
     private $jsonResponseFactory;
 
     /**
-     * CheckInitialSyncStatus constructor.
+     * CheckSyncStatus constructor.
      *
      * @param Context $context
      * @param JsonFactory $jsonResponseFactory
@@ -37,7 +37,7 @@ class CheckInitialSyncStatus extends Action implements HttpGetActionInterface
     }
 
     /**
-     * Returns status of the latest task of type InitialSyncTask.
+     * Returns status of the latest synchronization task.
      *
      * @return Json
      */
@@ -47,6 +47,15 @@ class CheckInitialSyncStatus extends Action implements HttpGetActionInterface
         $queueItem = $this->getQueueService()->findLatestByType('InitialSyncTask');
         if ($queueItem === null) {
             return $response->setData('error');
+        }
+
+        if($queueItem->getStatus() !== 'completed') {
+            return $response->setData($queueItem->getStatus());
+        }
+
+        $queueItem = $this->getQueueService()->findLatestByType('ReceiverSyncTask');
+        if ($queueItem === null) {
+            return $response->setData('completed');
         }
 
         return $response->setData($queueItem->getStatus());
