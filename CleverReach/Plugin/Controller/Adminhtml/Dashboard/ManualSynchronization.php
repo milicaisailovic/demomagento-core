@@ -3,7 +3,7 @@
 namespace CleverReach\Plugin\Controller\Adminhtml\Dashboard;
 
 use CleverReach\Plugin\Bootstrap;
-use CleverReach\Plugin\IntegrationCore\BusinessLogic\InitialSynchronization\Tasks\Composite\InitialSyncTask;
+use CleverReach\Plugin\IntegrationCore\BusinessLogic\Receiver\Tasks\Composite\ReceiverSyncTask;
 use CleverReach\Plugin\IntegrationCore\BusinessLogic\TaskExecution\QueueService;
 use CleverReach\Plugin\IntegrationCore\Infrastructure\ServiceRegister;
 use CleverReach\Plugin\IntegrationCore\Infrastructure\TaskExecution\Exceptions\QueueStorageUnavailableException;
@@ -15,7 +15,7 @@ use Magento\Framework\App\Action\HttpGetActionInterface;
 use Magento\Framework\Controller\Result\Json;
 use Magento\Framework\Controller\Result\JsonFactory;
 
-class Synchronization extends Action implements HttpGetActionInterface
+class ManualSynchronization extends Action implements HttpGetActionInterface
 {
     /**
      * @var JsonFactory
@@ -23,39 +23,40 @@ class Synchronization extends Action implements HttpGetActionInterface
     private $jsonResponseFactory;
 
     /**
-     * Synchronization constructor.
+     * ManualSynchronization controller.
      *
      * @param Context $context
-     * @param JsonFactory $jsonFactory
+     * @param JsonFactory $jsonResponseFactory
      */
-    public function __construct(Context $context, JsonFactory $jsonFactory)
+    public function __construct(
+        Context     $context,
+        JsonFactory $jsonResponseFactory
+    )
     {
         parent::__construct($context);
 
         Bootstrap::init();
 
-        $this->jsonResponseFactory = $jsonFactory;
+        $this->jsonResponseFactory = $jsonResponseFactory;
     }
 
     /**
-     * Enqueue InitialSyncTask.
+     * Enqueue ReceiverSyncTask.
      *
      * @return Json
      */
     public function execute(): Json
     {
         $response = $this->jsonResponseFactory->create();
-
         CleverReachConfig::setSynchronizationServices();
-
         try {
-            $this->getQueueService()->enqueue('authQueue', new InitialSyncTask());
+            $this->getQueueService()->enqueue('authQueue', new ReceiverSyncTask());
             $this->getWakeup()->wakeup();
-
         } catch (QueueStorageUnavailableException $e) {
+            return $response->setData('error');
         }
 
-        return $response->setData([]);
+        return $response;
     }
 
     /**

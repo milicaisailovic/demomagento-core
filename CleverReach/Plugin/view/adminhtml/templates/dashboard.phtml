@@ -21,7 +21,8 @@
     </div>
 </div>
 <input type="hidden" value="<?= $block->getSynchronizationUrl(); ?>" id="syncUrl">
-<input type="hidden" value="<?= $block->getInitialSyncStatusUrl(); ?>" id="checkInitialSyncUrl">
+<input type="hidden" value="<?= $block->getSyncStatusUrl(); ?>" id="checkSyncUrl">
+<input type="hidden" value="<?= $block->getManualSynchronizationUrl(); ?>" id="manualSyncUrl">
 <script>
     window.onload = initialSync();
 </script>

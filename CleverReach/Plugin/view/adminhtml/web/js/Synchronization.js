@@ -1,18 +1,24 @@
 let checkStatus;
-let checkStatusUrl;
 
 initialSync = function () {
     if (localStorage.getItem('initialSyncDone') === null || localStorage.getItem('initialSyncDone') !== 'done') {
-        Demomagento.ajaxService.get(document.getElementById('syncUrl').value, syncStarted, syncError);
+        Demomagento.ajaxService.get(document.getElementById('syncUrl').value, initialSyncStarted, syncError);
+        localStorage.setItem('initialSyncDone', 'done');
     } else {
-        syncStarted();
+        Demomagento.ajaxService.get(document.getElementById('checkSyncUrl').value, checkSyncStatus, syncError);
     }
 }
 
-syncStarted = function () {
+initialSyncStarted = function () {
     checkStatus = setInterval(function () {
-        Demomagento.ajaxService.get(document.getElementById('checkInitialSyncUrl').value, checkInitialSyncStatus, syncError);
+        Demomagento.ajaxService.get(document.getElementById('checkSyncUrl').value, checkSyncStatus, syncError);
     }, 1000);
+}
+
+syncDone = function () {
+    clearInterval(checkStatus);
+    document.getElementById('statusValue').innerHTML = 'Done';
+    document.getElementById('statusValue').style.color = 'forestgreen';
 }
 
 syncError = function () {
@@ -20,11 +26,9 @@ syncError = function () {
     document.getElementById('statusValue').style.color = 'red';
 }
 
-checkInitialSyncStatus = function (response) {
+checkSyncStatus = function (response) {
     if (response === 'completed') {
-        clearInterval(checkStatus);
-        document.getElementById('statusValue').innerHTML = 'Done';
-        document.getElementById('statusValue').style.color = 'forestgreen';
+        syncDone();
         localStorage.setItem('initialSyncDone', 'done');
     } else if (response === 'failed') {
         syncError();

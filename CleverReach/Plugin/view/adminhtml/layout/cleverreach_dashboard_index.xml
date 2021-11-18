@@ -6,6 +6,7 @@
         <css src="CleverReach_Plugin::css/dashboard.css"/>
         <script src="CleverReach_Plugin::js/AjaxService.js"/>
         <script src="CleverReach_Plugin::js/Synchronization.js"/>
+        <script src="CleverReach_Plugin::js/ManualSynchronization.js"/>
     </head>
     <body>
         <referenceContainer name="content">

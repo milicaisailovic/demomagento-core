@@ -7,7 +7,6 @@ use CleverReach\Plugin\IntegrationCore\BusinessLogic\Authorization\Contracts\Aut
 use CleverReach\Plugin\IntegrationCore\BusinessLogic\Authorization\Exceptions\FailedToRetrieveUserInfoException;
 use CleverReach\Plugin\IntegrationCore\Infrastructure\ORM\Exceptions\QueryFilterInvalidParamException;
 use CleverReach\Plugin\IntegrationCore\Infrastructure\ServiceRegister;
-use CleverReach\Plugin\IntegrationCore\Infrastructure\TaskExecution\QueueService;
 use CleverReach\Plugin\Services\BusinessLogic\Authorization\AuthorizationService;
 use Magento\Backend\Block\Template\Context;
 use Magento\Framework\View\Element\Template;
@@ -55,13 +54,24 @@ class DashboardBlock extends Template
     }
 
     /**
-     * Get URL for checking initial synchronization status.
+     * Returns status of the latest task of type InitialSyncTask.
      *
      * @return string
      */
-    public function getInitialSyncStatusUrl(): string
+    public function getSyncStatusUrl(): string
     {
-        return $this->getUrl('cleverreach/dashboard/checkinitialsyncstatus');
+        return $this->getUrl('cleverreach/dashboard/checksyncstatus');
+    }
+
+    /**
+     * Get URL for manual synchronization.
+     *
+     * @return string
+     */
+    public function getManualSynchronizationUrl(): string
+    {
+        return $this->getUrl('cleverreach/dashboard/manualsynchronization');
+
     }
 
     /**
@@ -71,14 +81,5 @@ class DashboardBlock extends Template
     {
         /** @noinspection PhpIncompatibleReturnTypeInspection */
         return ServiceRegister::getService(AuthorizationServiceContract::CLASS_NAME);
-    }
-
-    /**
-     * @return \CleverReach\Plugin\IntegrationCore\BusinessLogic\TaskExecution\QueueService
-     */
-    private function getQueueService(): QueueService
-    {
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
-        return ServiceRegister::getService(QueueService::CLASS_NAME);
     }
 }
