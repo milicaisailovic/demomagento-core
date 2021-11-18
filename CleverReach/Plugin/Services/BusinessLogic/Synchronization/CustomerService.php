@@ -79,6 +79,7 @@ class CustomerService extends ReceiverService
         $receiver = [];
         $receiver['email'] = $customer['email'];
         $receiver['registered'] = $customer['created_at'];
+        $receiver['activated'] = $customer['created_at'];
         $receiver['deactivated'] = $customer['created_at'];
         $receiver['global_attributes']['firstname'] = $customer['firstname'];
         $receiver['global_attributes']['lastname'] = $customer['lastname'];

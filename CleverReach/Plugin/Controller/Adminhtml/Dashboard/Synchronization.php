@@ -53,8 +53,8 @@ class Synchronization extends Action implements HttpGetActionInterface
 
         $identityService = new IdentityService();
         $services = [
-            new SyncService($identityService->generateId(), 2, CustomerService::class),
-            new SyncService($identityService->generateId(), 1, SubscriberService::class)
+            new SyncService($identityService->generateId(), 1, SubscriberService::class),
+            new SyncService($identityService->generateId(), 2, CustomerService::class)
         ];
 
         $configService = $this->getSyncConfigService();
