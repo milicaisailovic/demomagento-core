@@ -1,8 +1,9 @@
 <?php
 
-namespace CleverReach\Plugin\Controller\Adminhtml\Dashboard;
+namespace CleverReach\Plugin\Observer;
 
 use CleverReach\Plugin\Bootstrap;
+use CleverReach\Plugin\IntegrationCore\BusinessLogic\Receiver\Tasks\Composite\Configuration\SyncConfiguration;
 use CleverReach\Plugin\IntegrationCore\BusinessLogic\Receiver\Tasks\Composite\ReceiverSyncTask;
 use CleverReach\Plugin\IntegrationCore\BusinessLogic\TaskExecution\QueueService;
 use CleverReach\Plugin\IntegrationCore\Infrastructure\ServiceRegister;
@@ -11,54 +12,41 @@ use CleverReach\Plugin\IntegrationCore\Infrastructure\TaskExecution\Interfaces\T
 use CleverReach\Plugin\Services\BusinessLogic\Config\CleverReachConfig;
 use CleverReach\Plugin\Services\BusinessLogic\Synchronization\CustomerService;
 use CleverReach\Plugin\Services\BusinessLogic\Synchronization\SubscriberService;
-use Magento\Backend\App\Action;
-use Magento\Backend\App\Action\Context;
-use Magento\Framework\App\Action\HttpGetActionInterface;
-use Magento\Framework\Controller\Result\Json;
-use Magento\Framework\Controller\Result\JsonFactory;
+use Magento\Framework\Event\Observer;
+use Magento\Framework\Event\ObserverInterface;
 
-class ManualSynchronization extends Action implements HttpGetActionInterface
+class SaveCustomer implements ObserverInterface
 {
     /**
-     * @var JsonFactory
+     * SaveCustomer observer constructor.
      */
-    private $jsonResponseFactory;
-
-    /**
-     * ManualSynchronization controller.
-     *
-     * @param Context $context
-     * @param JsonFactory $jsonResponseFactory
-     */
-    public function __construct(
-        Context     $context,
-        JsonFactory $jsonResponseFactory
-    )
+    public function __construct()
     {
-        parent::__construct($context);
-
         Bootstrap::init();
-
-        $this->jsonResponseFactory = $jsonResponseFactory;
     }
 
     /**
-     * Enqueue ReceiverSyncTask.
+     * Save new or edited customer on API.
      *
-     * @return Json
+     * @param Observer $observer
      */
-    public function execute(): Json
+    public function execute(Observer $observer)
     {
-        $response = $this->jsonResponseFactory->create();
-        CleverReachConfig::setSynchronizationServices([CustomerService::class, SubscriberService::class]);
-        try {
-            $this->getQueueService()->enqueue('authQueue', new ReceiverSyncTask());
-            $this->getWakeup()->wakeup();
-        } catch (QueueStorageUnavailableException $e) {
-            return $response->setData('error');
+        $customer = $observer->getEvent()->getCustomer();
+        $services = [CustomerService::class];
+
+        $isSubscribed = $customer->getExtensionAttributes()->getIsSubscribed();
+        if ($isSubscribed === true) {
+            $services[] = SubscriberService::class;
         }
 
-        return $response;
+        CleverReachConfig::setSynchronizationServices($services);
+        $task = new ReceiverSyncTask(new SyncConfiguration([$customer->getEmail()]));
+        try {
+            $this->getQueueService()->enqueue('authQueue', $task);
+            $this->getWakeup()->wakeup();
+        } catch (QueueStorageUnavailableException $e) {
+        }
     }
 
     /**

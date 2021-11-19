@@ -6,8 +6,6 @@ use CleverReach\Plugin\IntegrationCore\BusinessLogic\Receiver\Contracts\SyncConf
 use CleverReach\Plugin\IntegrationCore\BusinessLogic\Receiver\DTO\Config\SyncService;
 use CleverReach\Plugin\IntegrationCore\BusinessLogic\Receiver\SyncConfigService;
 use CleverReach\Plugin\IntegrationCore\Infrastructure\ServiceRegister;
-use CleverReach\Plugin\Services\BusinessLogic\Synchronization\CustomerService;
-use CleverReach\Plugin\Services\BusinessLogic\Synchronization\SubscriberService;
 use Magento\Framework\DataObject\IdentityService;
 
 class CleverReachConfig
@@ -16,13 +14,19 @@ class CleverReachConfig
 
     const AUTHORIZE_URL = 'https://rest.cleverreach.com/oauth/authorize.php';
 
-    public static function setSynchronizationServices()
+    /**
+     * Set synchronization services.
+     *
+     * @param array $serviceNames sorted by priority!
+     */
+    public static function setSynchronizationServices(array $serviceNames)
     {
         $identityService = new IdentityService();
-        $services = [
-            new SyncService($identityService->generateId(), 1, SubscriberService::class),
-            new SyncService($identityService->generateId(), 2, CustomerService::class)
-        ];
+        $services = [];
+        $currentPriority = 1;
+        foreach ($serviceNames as $service) {
+            $services[] = new SyncService($identityService->generateId(), $currentPriority++, $service);
+        }
 
         $configService = self::getSyncConfigService();
         $configService->setEnabledServices($services);

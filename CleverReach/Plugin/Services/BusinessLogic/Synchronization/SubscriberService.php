@@ -36,7 +36,12 @@ class SubscriberService extends ReceiverService
      */
     public function getReceiver($email, $isServiceSpecificDataRequired = false): ?Receiver
     {
-        return null;
+        $receiver = new Receiver();
+        $receiver->setEmail($email);
+        $receiver->setDeactivated('0');
+        $receiver->setActive(true);
+
+        return $receiver;
     }
 
     /**
@@ -53,8 +58,6 @@ class SubscriberService extends ReceiverService
         foreach ($emails as $email) {
             $rawSubscriber = $this->subscriberRepository->getSubscriberByEmail($email);
             $receiver = (new Receiver())->fromArray($this->convertToReceiver($rawSubscriber[0]));
-            $receiver->setActive(true);
-            $receiver->setDeactivated('0');
             $receivers[] = $receiver;
         }
 

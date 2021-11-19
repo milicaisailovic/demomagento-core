@@ -1,0 +1,28 @@
+<?xml version="1.0" ?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="adminhtml_customer_save_after">
+        <observer name="cleverreach_customer_save_after"
+                  instance="CleverReach\Plugin\Observer\SaveCustomer"/>
+    </event>
+    <event name="customer_register_success">
+        <observer name="cleverreach_customer_register_success"
+                  instance="CleverReach\Plugin\Observer\SaveCustomer"/>
+    </event>
+    <event name="customer_account_edited">
+        <observer name="cleverreach_customer_account_edited"
+                  instance="CleverReach\Plugin\Observer\CustomerAccountEdited"/>
+    </event>
+    <event name="customer_delete_after">
+        <observer name="cleverreach_customer_delete_after"
+                  instance="CleverReach\Plugin\Observer\CustomerDeleteAfter"/>
+    </event>
+    <event name="newsletter_subscriber_save_after">
+        <observer name="cleverreach_newsletter_subscriber_save_after"
+                  instance="CleverReach\Plugin\Observer\SaveSubscriber"/>
+    </event>
+    <event name="newsletter_subscriber_delete_after">
+        <observer name="cleverreach_newsletter_subscriber_delete_after"
+                  instance="CleverReach\Plugin\Observer\SubscriberDeleteAfter"/>
+    </event>
+</config>

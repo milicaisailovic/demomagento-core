@@ -1,8 +1,9 @@
 <?php
 
-namespace CleverReach\Plugin\Controller\Adminhtml\Dashboard;
+namespace CleverReach\Plugin\Observer;
 
 use CleverReach\Plugin\Bootstrap;
+use CleverReach\Plugin\IntegrationCore\BusinessLogic\Receiver\Tasks\Composite\Configuration\SyncConfiguration;
 use CleverReach\Plugin\IntegrationCore\BusinessLogic\Receiver\Tasks\Composite\ReceiverSyncTask;
 use CleverReach\Plugin\IntegrationCore\BusinessLogic\TaskExecution\QueueService;
 use CleverReach\Plugin\IntegrationCore\Infrastructure\ServiceRegister;
@@ -10,55 +11,34 @@ use CleverReach\Plugin\IntegrationCore\Infrastructure\TaskExecution\Exceptions\Q
 use CleverReach\Plugin\IntegrationCore\Infrastructure\TaskExecution\Interfaces\TaskRunnerWakeup;
 use CleverReach\Plugin\Services\BusinessLogic\Config\CleverReachConfig;
 use CleverReach\Plugin\Services\BusinessLogic\Synchronization\CustomerService;
-use CleverReach\Plugin\Services\BusinessLogic\Synchronization\SubscriberService;
-use Magento\Backend\App\Action;
-use Magento\Backend\App\Action\Context;
-use Magento\Framework\App\Action\HttpGetActionInterface;
-use Magento\Framework\Controller\Result\Json;
-use Magento\Framework\Controller\Result\JsonFactory;
+use Magento\Framework\Event\Observer;
+use Magento\Framework\Event\ObserverInterface;
 
-class ManualSynchronization extends Action implements HttpGetActionInterface
+class CustomerAccountEdited implements ObserverInterface
 {
     /**
-     * @var JsonFactory
+     * CustomerAccountEdited constructor.
      */
-    private $jsonResponseFactory;
-
-    /**
-     * ManualSynchronization controller.
-     *
-     * @param Context $context
-     * @param JsonFactory $jsonResponseFactory
-     */
-    public function __construct(
-        Context     $context,
-        JsonFactory $jsonResponseFactory
-    )
+    public function __construct()
     {
-        parent::__construct($context);
-
         Bootstrap::init();
-
-        $this->jsonResponseFactory = $jsonResponseFactory;
     }
 
     /**
-     * Enqueue ReceiverSyncTask.
+     * Edit receiver on API when customer updates his information.
      *
-     * @return Json
+     * @param Observer $observer
      */
-    public function execute(): Json
+    public function execute(Observer $observer)
     {
-        $response = $this->jsonResponseFactory->create();
-        CleverReachConfig::setSynchronizationServices([CustomerService::class, SubscriberService::class]);
+        $email = $observer->getEvent()->getEmail();
+        CleverReachConfig::setSynchronizationServices([CustomerService::class]);
+        $task = new ReceiverSyncTask(new SyncConfiguration([$email]));
         try {
-            $this->getQueueService()->enqueue('authQueue', new ReceiverSyncTask());
+            $this->getQueueService()->enqueue('authQueue', $task);
             $this->getWakeup()->wakeup();
         } catch (QueueStorageUnavailableException $e) {
-            return $response->setData('error');
         }
-
-        return $response;
     }
 
     /**
