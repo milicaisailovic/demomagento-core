@@ -20,6 +20,6 @@ class ReceiverEventsService extends BaseReceiverEventsService
      */
     public function getEventUrl(): string
     {
-        return 'https://3c2c-82-117-217-138.ngrok.io/';
+        return 'https://7cb3-82-117-217-138.ngrok.io/front/event/receiverwebhook';
     }
 }
