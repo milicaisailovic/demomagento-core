@@ -3,8 +3,9 @@
 namespace CleverReach\Plugin\Controller\Adminhtml\Dashboard;
 
 use CleverReach\Plugin\Bootstrap;
+use CleverReach\Plugin\IntegrationCore\BusinessLogic\TaskExecution\QueueService;
 use CleverReach\Plugin\IntegrationCore\Infrastructure\ServiceRegister;
-use CleverReach\Plugin\IntegrationCore\Infrastructure\TaskExecution\QueueService;
+use CleverReach\Plugin\IntegrationCore\Infrastructure\TaskExecution\QueueService as BaseQueueService;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\App\Action\HttpGetActionInterface;
@@ -49,7 +50,7 @@ class CheckSyncStatus extends Action implements HttpGetActionInterface
             return $response->setData('error');
         }
 
-        if($queueItem->getStatus() !== 'completed') {
+        if ($queueItem->getStatus() !== 'completed') {
             return $response->setData($queueItem->getStatus());
         }
 
@@ -62,11 +63,11 @@ class CheckSyncStatus extends Action implements HttpGetActionInterface
     }
 
     /**
-     * @return \CleverReach\Plugin\IntegrationCore\BusinessLogic\TaskExecution\QueueService
+     * @return QueueService
      */
-    private function getQueueService(): QueueService
+    private function getQueueService(): BaseQueueService
     {
         /** @noinspection PhpIncompatibleReturnTypeInspection */
-        return ServiceRegister::getService(QueueService::CLASS_NAME);
+        return ServiceRegister::getService(BaseQueueService::CLASS_NAME);
     }
 }

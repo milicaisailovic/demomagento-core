@@ -7,7 +7,6 @@ use CleverReach\Plugin\IntegrationCore\BusinessLogic\InitialSynchronization\Task
 use CleverReach\Plugin\IntegrationCore\BusinessLogic\TaskExecution\QueueService;
 use CleverReach\Plugin\IntegrationCore\Infrastructure\ServiceRegister;
 use CleverReach\Plugin\IntegrationCore\Infrastructure\TaskExecution\Exceptions\QueueStorageUnavailableException;
-use CleverReach\Plugin\IntegrationCore\Infrastructure\TaskExecution\Interfaces\TaskRunnerWakeup;
 use CleverReach\Plugin\Services\BusinessLogic\Config\CleverReachConfig;
 use CleverReach\Plugin\Services\BusinessLogic\Synchronization\CustomerService;
 use CleverReach\Plugin\Services\BusinessLogic\Synchronization\SubscriberService;
@@ -52,9 +51,9 @@ class Synchronization extends Action implements HttpGetActionInterface
 
         try {
             $this->getQueueService()->enqueue('authQueue', new InitialSyncTask());
-            $this->getWakeup()->wakeup();
-
         } catch (QueueStorageUnavailableException $e) {
+            $response->setHttpResponseCode(500);
+            return $response->setData('Queue storage is unavailable');
         }
 
         return $response->setData([]);
@@ -67,14 +66,5 @@ class Synchronization extends Action implements HttpGetActionInterface
     {
         /** @noinspection PhpIncompatibleReturnTypeInspection */
         return ServiceRegister::getService(QueueService::CLASS_NAME);
-    }
-
-    /**
-     * @return TaskRunnerWakeup
-     */
-    private function getWakeup(): TaskRunnerWakeup
-    {
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
-        return ServiceRegister::getService(TaskRunnerWakeup::CLASS_NAME);
     }
 }

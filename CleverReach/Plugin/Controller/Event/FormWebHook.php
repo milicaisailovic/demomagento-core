@@ -8,6 +8,7 @@ use CleverReach\Plugin\IntegrationCore\Infrastructure\ServiceRegister;
 use CleverReach\Plugin\Services\BusinessLogic\Synchronization\FormEventsService;
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
+use Magento\Framework\Controller\ResultFactory;
 
 class FormWebHook extends Action
 {
@@ -26,8 +27,6 @@ class FormWebHook extends Action
 
     /**
      * Send information for verifying FormWebHook.
-     *
-     * @return void
      */
     public function execute()
     {
@@ -35,7 +34,10 @@ class FormWebHook extends Action
         $token = $this->getEventsService()->getVerificationToken() . ' ' . $secret;
         header('Content-Type: text/html');
 
-        echo $token;
+        return $this->resultFactory->create(ResultFactory::TYPE_RAW)
+            ->setHeader('Content-Type', 'text/plain')
+            ->setContents($token)
+            ->setHttpResponseCode(200);
     }
 
     /**

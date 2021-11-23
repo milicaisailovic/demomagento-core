@@ -7,7 +7,6 @@ use CleverReach\Plugin\IntegrationCore\BusinessLogic\Receiver\Tasks\Composite\Un
 use CleverReach\Plugin\IntegrationCore\BusinessLogic\TaskExecution\QueueService;
 use CleverReach\Plugin\IntegrationCore\Infrastructure\ServiceRegister;
 use CleverReach\Plugin\IntegrationCore\Infrastructure\TaskExecution\Exceptions\QueueStorageUnavailableException;
-use CleverReach\Plugin\IntegrationCore\Infrastructure\TaskExecution\Interfaces\TaskRunnerWakeup;
 use CleverReach\Plugin\Services\BusinessLogic\Config\CleverReachConfig;
 use CleverReach\Plugin\Services\BusinessLogic\Synchronization\CustomerService;
 use Magento\Framework\Event\Observer;
@@ -34,7 +33,6 @@ class SubscriberDeleteAfter implements ObserverInterface
         CleverReachConfig::setSynchronizationServices([CustomerService::class]);
         try {
             $this->getQueueService()->enqueue('authQueue', new UnsubscribeReceiverTask($email));
-            $this->getWakeup()->wakeup();
         } catch (QueueStorageUnavailableException $e) {
         }
     }
@@ -46,14 +44,5 @@ class SubscriberDeleteAfter implements ObserverInterface
     {
         /** @noinspection PhpIncompatibleReturnTypeInspection */
         return ServiceRegister::getService(QueueService::CLASS_NAME);
-    }
-
-    /**
-     * @return TaskRunnerWakeup
-     */
-    private function getWakeup(): TaskRunnerWakeup
-    {
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
-        return ServiceRegister::getService(TaskRunnerWakeup::CLASS_NAME);
     }
 }

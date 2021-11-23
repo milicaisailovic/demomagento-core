@@ -13,10 +13,10 @@ use CleverReach\Plugin\IntegrationCore\Infrastructure\Http\Exceptions\HttpReques
 use CleverReach\Plugin\IntegrationCore\Infrastructure\ORM\Exceptions\QueryFilterInvalidParamException;
 use CleverReach\Plugin\IntegrationCore\Infrastructure\ServiceRegister;
 use CleverReach\Plugin\IntegrationCore\Infrastructure\TaskExecution\Exceptions\QueueStorageUnavailableException;
-use CleverReach\Plugin\IntegrationCore\Infrastructure\TaskExecution\Interfaces\TaskRunnerWakeup;
 use CleverReach\Plugin\Services\BusinessLogic\Authorization\AuthorizationService;
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
+use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Framework\Controller\ResultInterface;
 use Magento\Framework\View\Result\Page;
 use Magento\Framework\View\Result\PageFactory;
@@ -29,14 +29,21 @@ class Index extends Action
     protected $_pageFactory;
 
     /**
+     * @var JsonFactory
+     */
+    private $jsonFactory;
+
+    /**
      * Callback index constructor.
      *
      * @param Context $context
      * @param PageFactory $pageFactory
+     * @param JsonFactory $jsonFactory
      */
     public function __construct(
         Context     $context,
-        PageFactory $pageFactory
+        PageFactory $pageFactory,
+        JsonFactory $jsonFactory
     )
     {
         parent::__construct($context);
@@ -44,6 +51,7 @@ class Index extends Action
         Bootstrap::init();
 
         $this->_pageFactory = $pageFactory;
+        $this->jsonFactory = $jsonFactory;
     }
 
     /**
@@ -56,15 +64,16 @@ class Index extends Action
         try {
             $this->getAuthorizationService()->authorize($_GET['code']);
             $this->getQueueService()->enqueue('authQueue', new ConnectTask());
-            $this->getWakeup()->wakeup();
 
-            return $this->_pageFactory->create();
         } catch (FailedToRefreshAccessToken | FailedToRetrieveAuthInfoException | HttpCommunicationException
         | HttpRequestException | QueueStorageUnavailableException | QueryFilterInvalidParamException $e) {
-            echo $e->getMessage();
+            $response = $this->jsonFactory->create();
+            $response->setHttpResponseCode($e->getCode());
 
-            return '';
+            return $response->setData($e);
         }
+
+        return $this->_pageFactory->create();
     }
 
     /**
@@ -83,14 +92,5 @@ class Index extends Action
     {
         /** @noinspection PhpIncompatibleReturnTypeInspection */
         return ServiceRegister::getService(QueueService::CLASS_NAME);
-    }
-
-    /**
-     * @return TaskRunnerWakeup
-     */
-    private function getWakeup(): TaskRunnerWakeup
-    {
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
-        return ServiceRegister::getService(TaskRunnerWakeup::CLASS_NAME);
     }
 }

@@ -13,7 +13,6 @@ use CleverReach\Plugin\Services\BusinessLogic\Config\CleverReachConfig;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\App\Action\HttpGetActionInterface;
-use Magento\Framework\Controller\Result\Redirect;
 use Magento\Framework\View\Result\Page;
 use Magento\Framework\View\Result\PageFactory;
 
@@ -45,9 +44,9 @@ class Index extends Action implements HttpGetActionInterface
     /**
      * Render CleverReach landing page if token doesn't exists.
      *
-     * @return Page|Redirect
+     * @return Page
      */
-    public function execute()
+    public function execute(): Page
     {
         $resultPage = $this->resultPageFactory->create();
         try {

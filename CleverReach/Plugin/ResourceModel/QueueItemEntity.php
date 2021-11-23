@@ -1,9 +1,4 @@
 <?php
-/**
- * @package    Packlink_PacklinkPro
- * @author     Packlink Shipping S.L.
- * @copyright  2019 Packlink
- */
 
 namespace CleverReach\Plugin\ResourceModel;
 
@@ -21,7 +16,7 @@ use function is_array;
 /**
  * Class QueueItemEntity
  *
- * @package Packlink\PacklinkPro\ResourceModel
+ * @package CleverReach\Plugin\ResourceModel
  */
 class QueueItemEntity extends CleverReachEntity
 {

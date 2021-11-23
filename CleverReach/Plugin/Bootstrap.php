@@ -2,31 +2,43 @@
 
 namespace CleverReach\Plugin;
 
+
+use CleverReach\BusinessLogic\Receiver\WebHooks\Handler as ReceiverHandler;
 use CleverReach\Plugin\IntegrationCore\BusinessLogic\Authorization\Contracts\AuthorizationService as AuthorizationServiceContract;
 use CleverReach\Plugin\IntegrationCore\BusinessLogic\Authorization\Http\AuthProxy;
 use CleverReach\Plugin\IntegrationCore\BusinessLogic\Authorization\Http\OauthStatusProxy;
 use CleverReach\Plugin\IntegrationCore\BusinessLogic\Authorization\Http\UserProxy;
 use CleverReach\Plugin\IntegrationCore\BusinessLogic\Dashboard\Contracts\DashboardService as DashboardServiceContract;
 use CleverReach\Plugin\IntegrationCore\BusinessLogic\Dashboard\DashboardService;
-use CleverReach\Plugin\IntegrationCore\BusinessLogic\Field\Contracts\FieldService;
+use CleverReach\Plugin\IntegrationCore\BusinessLogic\DynamicContent\Contracts\DynamicContentService as DynamicContentServiceContract;
+use CleverReach\Plugin\IntegrationCore\BusinessLogic\Field\Contracts\FieldService as FieldServiceContract;
 use CleverReach\Plugin\IntegrationCore\BusinessLogic\Field\Http\Proxy as FieldProxy;
+use CleverReach\Plugin\IntegrationCore\BusinessLogic\Form\Contracts\FormCacheService as FormCacheServiceContract;
+use CleverReach\Plugin\IntegrationCore\BusinessLogic\Form\Contracts\FormService as FormServiceContract;
 use CleverReach\Plugin\IntegrationCore\BusinessLogic\Form\Entities\Form;
 use CleverReach\Plugin\IntegrationCore\BusinessLogic\Form\FormCacheService;
-use CleverReach\Plugin\IntegrationCore\BusinessLogic\Form\FormEventsService;
-use CleverReach\Plugin\IntegrationCore\BusinessLogic\Form\FormEventsService as FormEventsServiceContract;
+use CleverReach\Plugin\IntegrationCore\BusinessLogic\Form\FormEventsService as BaseFormEventsService;
 use CleverReach\Plugin\IntegrationCore\BusinessLogic\Form\Http\Proxy as FormProxy;
+use CleverReach\Plugin\IntegrationCore\BusinessLogic\Group\Contracts\GroupService as GroupServiceContract;
 use CleverReach\Plugin\IntegrationCore\BusinessLogic\Group\Http\Proxy as GroupProxy;
+use CleverReach\Plugin\IntegrationCore\BusinessLogic\Language\Contracts\TranslationService as TranslationServiceContract;
 use CleverReach\Plugin\IntegrationCore\BusinessLogic\Mailing\Contracts\DefaultMailingService;
 use CleverReach\Plugin\IntegrationCore\BusinessLogic\Mailing\Http\Proxy as MailingProxy;
 use CleverReach\Plugin\IntegrationCore\BusinessLogic\Receiver\Contracts\SyncConfigService as SyncConfigServiceContract;
+use CleverReach\Plugin\IntegrationCore\BusinessLogic\Receiver\Events\ReceiverCreatedEvent;
+use CleverReach\Plugin\IntegrationCore\BusinessLogic\Receiver\Events\ReceiverEventBus;
+use CleverReach\Plugin\IntegrationCore\BusinessLogic\Receiver\Events\ReceiverSubscribedEvent;
+use CleverReach\Plugin\IntegrationCore\BusinessLogic\Receiver\Events\ReceiverUnsubscribedEvent;
+use CleverReach\Plugin\IntegrationCore\BusinessLogic\Receiver\Events\ReceiverUpdatedEvent;
 use CleverReach\Plugin\IntegrationCore\BusinessLogic\Receiver\Http\Proxy as ReceiverProxy;
-use CleverReach\Plugin\IntegrationCore\BusinessLogic\Receiver\ReceiverEventsService as ReceiverEventsServiceContract;
+use CleverReach\Plugin\IntegrationCore\BusinessLogic\Receiver\ReceiverEventsService as BaseReceiverEventsService;
 use CleverReach\Plugin\IntegrationCore\BusinessLogic\Receiver\SyncConfigService;
+use CleverReach\Plugin\IntegrationCore\BusinessLogic\Segment\Contracts\SegmentService as SegmentServiceContract;
 use CleverReach\Plugin\IntegrationCore\BusinessLogic\Segment\Http\Proxy as SegmentProxy;
-use CleverReach\Plugin\IntegrationCore\BusinessLogic\TaskExecution\QueueService;
 use CleverReach\Plugin\IntegrationCore\BusinessLogic\WebHookEvent\Http\Proxy as WebHookProxy;
 use CleverReach\Plugin\IntegrationCore\Infrastructure\BootstrapComponent;
 use CleverReach\Plugin\IntegrationCore\Infrastructure\Configuration\ConfigEntity;
+use CleverReach\Plugin\IntegrationCore\Infrastructure\Configuration\Configuration as BaseConfiguration;
 use CleverReach\Plugin\IntegrationCore\Infrastructure\Http\CurlHttpClient;
 use CleverReach\Plugin\IntegrationCore\Infrastructure\Logger\Interfaces\DefaultLoggerAdapter;
 use CleverReach\Plugin\IntegrationCore\Infrastructure\Logger\Interfaces\ShopLoggerAdapter;
@@ -37,11 +49,15 @@ use CleverReach\Plugin\IntegrationCore\Infrastructure\Serializer\Serializer;
 use CleverReach\Plugin\IntegrationCore\Infrastructure\ServiceRegister;
 use CleverReach\Plugin\IntegrationCore\Infrastructure\TaskExecution\Process;
 use CleverReach\Plugin\IntegrationCore\Infrastructure\TaskExecution\QueueItem;
+use CleverReach\Plugin\IntegrationCore\Infrastructure\TaskExecution\QueueService;
 use CleverReach\Plugin\Repository\BaseRepository;
 use CleverReach\Plugin\Repository\QueueItemRepository;
 use CleverReach\Plugin\Services\BusinessLogic\Authorization\AuthorizationService;
 use CleverReach\Plugin\Services\BusinessLogic\ConfigurationService;
 use CleverReach\Plugin\Services\BusinessLogic\Synchronization\CustomerService;
+use CleverReach\Plugin\Services\BusinessLogic\Synchronization\DynamicContentService;
+use CleverReach\Plugin\Services\BusinessLogic\Synchronization\FieldService;
+use CleverReach\Plugin\Services\BusinessLogic\Synchronization\FormEventsService;
 use CleverReach\Plugin\Services\BusinessLogic\Synchronization\FormService;
 use CleverReach\Plugin\Services\BusinessLogic\Synchronization\GroupService;
 use CleverReach\Plugin\Services\BusinessLogic\Synchronization\MailingService;
@@ -49,17 +65,11 @@ use CleverReach\Plugin\Services\BusinessLogic\Synchronization\ReceiverEventsServ
 use CleverReach\Plugin\Services\BusinessLogic\Synchronization\SegmentService;
 use CleverReach\Plugin\Services\BusinessLogic\Synchronization\SubscriberService;
 use CleverReach\Plugin\Services\BusinessLogic\Synchronization\TranslationService;
+use CleverReach\Plugin\Services\BusinessLogic\WebHooks\ReceiverWebhookHandler;
 use CleverReach\Plugin\Services\Infrastructure\LoggerService;
 
 class Bootstrap extends BootstrapComponent
 {
-    /**
-     * Bootstrap constructor.
-     */
-    public function __construct()
-    {
-    }
-
     /**
      * Initializes infrastructure services and utilities.
      */
@@ -85,12 +95,15 @@ class Bootstrap extends BootstrapComponent
         RepositoryRegistry::registerRepository(Form::class, BaseRepository::getClassName());
     }
 
+    /**
+     * Initialize services.
+     */
     protected static function initInstanceServices(): void
     {
         parent::initServices();
 
         ServiceRegister::registerService(
-            IntegrationCore\Infrastructure\Configuration\Configuration::CLASS_NAME, function () {
+            BaseConfiguration::CLASS_NAME, function () {
             return new ConfigurationService();
         });
 
@@ -151,7 +164,7 @@ class Bootstrap extends BootstrapComponent
         );
 
         ServiceRegister::registerService(
-            IntegrationCore\BusinessLogic\Group\Contracts\GroupService::CLASS_NAME,
+            GroupServiceContract::CLASS_NAME,
             function () {
                 return new GroupService();
             }
@@ -165,7 +178,7 @@ class Bootstrap extends BootstrapComponent
         );
 
         ServiceRegister::registerService(
-            IntegrationCore\BusinessLogic\Form\Contracts\FormService::CLASS_NAME,
+            FormServiceContract::CLASS_NAME,
             function () {
                 return new FormService();
             }
@@ -179,7 +192,7 @@ class Bootstrap extends BootstrapComponent
         );
 
         ServiceRegister::registerService(
-            IntegrationCore\BusinessLogic\Form\Contracts\FormCacheService::CLASS_NAME,
+            FormCacheServiceContract::CLASS_NAME,
             function () {
                 return new FormCacheService();
             }
@@ -200,7 +213,7 @@ class Bootstrap extends BootstrapComponent
         );
 
         ServiceRegister::registerService(
-            ReceiverEventsServiceContract::CLASS_NAME,
+            BaseReceiverEventsService::CLASS_NAME,
             function () {
                 return new ReceiverEventsService();
             }
@@ -214,16 +227,16 @@ class Bootstrap extends BootstrapComponent
         );
 
         ServiceRegister::registerService(
-            FormEventsServiceContract::CLASS_NAME,
+            BaseFormEventsService::CLASS_NAME,
             function () {
-                return new Services\BusinessLogic\Synchronization\FormEventsService();
+                return new FormEventsService();
             }
         );
 
         ServiceRegister::registerService(
-            IntegrationCore\BusinessLogic\DynamicContent\Contracts\DynamicContentService::CLASS_NAME,
+            DynamicContentServiceContract::CLASS_NAME,
             function () {
-                return new Services\BusinessLogic\Synchronization\DynamicContentService();
+                return new DynamicContentService();
             }
         );
 
@@ -235,14 +248,14 @@ class Bootstrap extends BootstrapComponent
         );
 
         ServiceRegister::registerService(
-            FieldService::CLASS_NAME,
+            FieldServiceContract::CLASS_NAME,
             function () {
-                return new Services\BusinessLogic\Synchronization\FieldService();
+                return new FieldService();
             }
         );
 
         ServiceRegister::registerService(
-            IntegrationCore\BusinessLogic\Language\Contracts\TranslationService::CLASS_NAME,
+            TranslationServiceContract::CLASS_NAME,
             function () {
                 return TranslationService::getInstance();
             }
@@ -256,7 +269,7 @@ class Bootstrap extends BootstrapComponent
         );
 
         ServiceRegister::registerService(
-            IntegrationCore\BusinessLogic\Segment\Contracts\SegmentService::CLASS_NAME,
+            SegmentServiceContract::CLASS_NAME,
             function () {
                 return new SegmentService();
             }
@@ -294,6 +307,62 @@ class Bootstrap extends BootstrapComponent
             SubscriberService::class,
             function () {
                 return new SubscriberService();
+            }
+        );
+
+        ServiceRegister::registerService(
+            ReceiverHandler::class,
+            function () {
+                return new ReceiverHandler();
+            }
+        );
+
+        ServiceRegister::registerService(
+            ReceiverEventBus::class,
+            function () {
+                return ReceiverEventBus::getInstance();
+            }
+        );
+    }
+
+    /**
+     * Initialize events.
+     */
+    public static function initEvents()
+    {
+        parent::initEvents();
+
+        $receiverEventBus = ServiceRegister::getService(ReceiverEventBus::CLASS_NAME);
+
+        $receiverEventBus->when(
+            ReceiverUpdatedEvent::CLASS_NAME,
+            function (ReceiverUpdatedEvent $event) {
+                $handler = new ReceiverWebhookHandler();
+                $handler->receiverUpdated($event->getReceiverId());
+            }
+        );
+
+        $receiverEventBus->when(
+            ReceiverCreatedEvent::CLASS_NAME,
+            function (ReceiverCreatedEvent $event) {
+                $handler = new ReceiverWebhookHandler();
+                $handler->receiverCreated($event->getReceiverId());
+            }
+        );
+
+        $receiverEventBus->when(
+            ReceiverSubscribedEvent::CLASS_NAME,
+            function (ReceiverSubscribedEvent $event) {
+                $handler = new ReceiverWebhookHandler();
+                $handler->receiverSubscribed($event->getReceiverId());
+            }
+        );
+
+        $receiverEventBus->when(
+            ReceiverUnsubscribedEvent::CLASS_NAME,
+            function (ReceiverUnsubscribedEvent $event) {
+                $handler = new ReceiverWebhookHandler();
+                $handler->receiverUnsubscribed($event->getReceiverId());
             }
         );
     }

@@ -8,6 +8,7 @@ use CleverReach\Plugin\IntegrationCore\Infrastructure\TaskExecution\AsyncProcess
 use CleverReach\Plugin\IntegrationCore\Infrastructure\TaskExecution\Interfaces\AsyncProcessService;
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
+use Magento\Framework\Controller\Result\Json;
 use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Framework\Webapi\Exception;
 
@@ -38,8 +39,10 @@ class Index extends Action
 
     /**
      * Run process asynchronously.
+     *
+     * @return Json
      */
-    public function execute()
+    public function execute(): Json
     {
         $guid = $this->getRequest()->getParam('guid');
         if (!$guid) {

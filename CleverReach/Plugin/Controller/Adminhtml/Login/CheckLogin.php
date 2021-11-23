@@ -12,6 +12,7 @@ use CleverReach\Plugin\Services\BusinessLogic\Authorization\AuthorizationService
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\App\Action\HttpGetActionInterface;
+use Magento\Framework\Controller\Result\Json;
 use Magento\Framework\Controller\Result\JsonFactory;
 
 class CheckLogin extends Action implements HttpGetActionInterface
@@ -21,6 +22,12 @@ class CheckLogin extends Action implements HttpGetActionInterface
      */
     private $jsonResponseFactory;
 
+    /**
+     * CheckLogin constructor.
+     *
+     * @param Context $context
+     * @param JsonFactory $jsonResponseFactory
+     */
     public function __construct(
         Context     $context,
         JsonFactory $jsonResponseFactory
@@ -33,7 +40,12 @@ class CheckLogin extends Action implements HttpGetActionInterface
         $this->jsonResponseFactory = $jsonResponseFactory;
     }
 
-    public function execute()
+    /**
+     * Check if authorization is done.
+     *
+     * @return Json
+     */
+    public function execute(): Json
     {
         $response = $this->jsonResponseFactory->create();
 

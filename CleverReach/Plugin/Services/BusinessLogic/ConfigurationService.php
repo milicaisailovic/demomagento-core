@@ -3,6 +3,7 @@
 namespace CleverReach\Plugin\Services\BusinessLogic;
 
 use CleverReach\Plugin\IntegrationCore\BusinessLogic\Configuration\Configuration;
+use Magento\Framework\App\ObjectManager;
 
 class ConfigurationService extends Configuration
 {
@@ -21,7 +22,7 @@ class ConfigurationService extends Configuration
      */
     public function getSystemUrl(): string
     {
-        $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+        $objectManager = ObjectManager::getInstance();
         $storeManager = $objectManager->get('\Magento\Store\Model\StoreManagerInterface');
 
         return $storeManager->getStore()->getBaseUrl();

@@ -8,7 +8,6 @@ use CleverReach\Plugin\IntegrationCore\BusinessLogic\Receiver\Tasks\Composite\Re
 use CleverReach\Plugin\IntegrationCore\BusinessLogic\TaskExecution\QueueService;
 use CleverReach\Plugin\IntegrationCore\Infrastructure\ServiceRegister;
 use CleverReach\Plugin\IntegrationCore\Infrastructure\TaskExecution\Exceptions\QueueStorageUnavailableException;
-use CleverReach\Plugin\IntegrationCore\Infrastructure\TaskExecution\Interfaces\TaskRunnerWakeup;
 use CleverReach\Plugin\Services\BusinessLogic\Config\CleverReachConfig;
 use CleverReach\Plugin\Services\BusinessLogic\Synchronization\CustomerService;
 use Magento\Framework\Event\Observer;
@@ -36,7 +35,6 @@ class CustomerAccountEdited implements ObserverInterface
         $task = new ReceiverSyncTask(new SyncConfiguration([$email]));
         try {
             $this->getQueueService()->enqueue('authQueue', $task);
-            $this->getWakeup()->wakeup();
         } catch (QueueStorageUnavailableException $e) {
         }
     }
@@ -48,14 +46,5 @@ class CustomerAccountEdited implements ObserverInterface
     {
         /** @noinspection PhpIncompatibleReturnTypeInspection */
         return ServiceRegister::getService(QueueService::CLASS_NAME);
-    }
-
-    /**
-     * @return TaskRunnerWakeup
-     */
-    private function getWakeup(): TaskRunnerWakeup
-    {
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
-        return ServiceRegister::getService(TaskRunnerWakeup::CLASS_NAME);
     }
 }

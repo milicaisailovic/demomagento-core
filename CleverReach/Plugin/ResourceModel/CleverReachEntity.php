@@ -107,9 +107,9 @@ class CleverReachEntity extends AbstractDb
     }
 
     /**
-     * Updates an existing record in Packlink entity table identified by ID.
+     * Updates an existing record in CleverReach entity table identified by ID.
      *
-     * @param Entity $entity Packlink entity.
+     * @param Entity $entity CleverReach entity.
      *
      * @return bool Returns TRUE if updateEntity has been successful, otherwise returns FALSE.
      *

@@ -2,6 +2,7 @@
 
 namespace CleverReach\Plugin\Repository;
 
+use Magento\Customer\Model\Customer;
 use Magento\Customer\Model\ResourceModel\Customer\CollectionFactory;
 
 class CustomerRepository
@@ -12,13 +13,20 @@ class CustomerRepository
     private $customerFactory;
 
     /**
+     * @var Customer
+     */
+    private $customer;
+
+    /**
      * CustomerRepository constructor.
      */
     public function __construct(
-        CollectionFactory $customerFactory
+        CollectionFactory $customerFactory,
+        Customer          $customer
     )
     {
         $this->customerFactory = $customerFactory;
+        $this->customer = $customer;
     }
 
     /**

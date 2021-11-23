@@ -1,24 +1,19 @@
 <?php
-/**
- * @package    Packlink_PacklinkPro
- * @author     Packlink Shipping S.L.
- * @copyright  2019 Packlink
- */
 
 namespace CleverReach\Plugin\Repository;
 
-use CleverReach\Plugin\IntegrationCore\Infrastructure\ORM\Interfaces\RepositoryInterface;
-use CleverReach\Plugin\ResourceModel\CleverReachEntity;
 use CleverReach\Plugin\IntegrationCore\Infrastructure\ORM\Entity;
 use CleverReach\Plugin\IntegrationCore\Infrastructure\ORM\Exceptions\QueryFilterInvalidParamException;
+use CleverReach\Plugin\IntegrationCore\Infrastructure\ORM\Interfaces\RepositoryInterface;
 use CleverReach\Plugin\IntegrationCore\Infrastructure\ORM\QueryFilter\QueryFilter;
+use CleverReach\Plugin\ResourceModel\CleverReachEntity;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Exception\LocalizedException;
 
 /**
  * Class BaseRepository
  *
- * @package Packlink\PacklinkPro\Repository
+ * @package CleverReach\Plugin\Repository
  */
 class BaseRepository implements RepositoryInterface
 {
