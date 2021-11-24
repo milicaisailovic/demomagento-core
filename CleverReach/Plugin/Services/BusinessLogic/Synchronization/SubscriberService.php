@@ -57,8 +57,10 @@ class SubscriberService extends ReceiverService
         $receivers = [];
         foreach ($emails as $email) {
             $rawSubscriber = $this->subscriberRepository->getSubscriberByEmail($email);
-            $receiver = (new Receiver())->fromArray($this->convertToReceiver($rawSubscriber[0]));
-            $receivers[] = $receiver;
+            if (!empty($rawSubscriber)) {
+                $receiver = (new Receiver())->fromArray($this->convertToReceiver($rawSubscriber[0]));
+                $receivers[] = $receiver;
+            }
         }
 
         return $receivers;

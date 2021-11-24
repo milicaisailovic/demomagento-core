@@ -5,6 +5,7 @@ namespace CleverReach\Plugin\Controller\Adminhtml\Dashboard;
 use CleverReach\Plugin\Bootstrap;
 use CleverReach\Plugin\IntegrationCore\BusinessLogic\TaskExecution\QueueService;
 use CleverReach\Plugin\IntegrationCore\Infrastructure\ServiceRegister;
+use CleverReach\Plugin\IntegrationCore\Infrastructure\TaskExecution\QueueItem;
 use CleverReach\Plugin\IntegrationCore\Infrastructure\TaskExecution\QueueService as BaseQueueService;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
@@ -50,13 +51,13 @@ class CheckSyncStatus extends Action implements HttpGetActionInterface
             return $response->setData('error');
         }
 
-        if ($queueItem->getStatus() !== 'completed') {
+        if ($queueItem->getStatus() !== QueueItem::COMPLETED) {
             return $response->setData($queueItem->getStatus());
         }
 
         $queueItem = $this->getQueueService()->findLatestByType('ReceiverSyncTask');
         if ($queueItem === null) {
-            return $response->setData('completed');
+            return $response->setData(QueueItem::COMPLETED);
         }
 
         return $response->setData($queueItem->getStatus());

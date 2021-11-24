@@ -8,8 +8,6 @@ use CleverReach\Plugin\IntegrationCore\BusinessLogic\Receiver\Tasks\Composite\Un
 use CleverReach\Plugin\IntegrationCore\BusinessLogic\TaskExecution\QueueService;
 use CleverReach\Plugin\IntegrationCore\Infrastructure\ServiceRegister;
 use CleverReach\Plugin\IntegrationCore\Infrastructure\TaskExecution\Exceptions\QueueStorageUnavailableException;
-use CleverReach\Plugin\Services\BusinessLogic\Config\CleverReachConfig;
-use CleverReach\Plugin\Services\BusinessLogic\Synchronization\SubscriberService;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 
@@ -31,7 +29,6 @@ class SaveSubscriber implements ObserverInterface
     public function execute(Observer $observer)
     {
         $subscriber = $observer->getEvent()->getSubscriber();
-        CleverReachConfig::setSynchronizationServices([SubscriberService::class]);
         $task = $subscriber->getSubscriberStatus() === 1 ? new SubscribeReceiverTask($subscriber->getEmail())
             : new UnsubscribeReceiverTask($subscriber->getEmail());
         try {

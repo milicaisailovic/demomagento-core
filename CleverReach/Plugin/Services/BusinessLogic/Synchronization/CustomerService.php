@@ -36,7 +36,12 @@ class CustomerService extends ReceiverService
      */
     public function getReceiver($email, $isServiceSpecificDataRequired = false): ?Receiver
     {
-        return null;
+        $rawCustomer = $this->customerRepository->getCustomerByEmail($email);
+        if (empty($rawCustomer)) {
+            return null;
+        }
+
+        return (new Receiver())->fromArray($this->convertToReceiver($rawCustomer[0]));
     }
 
     /**
@@ -52,8 +57,10 @@ class CustomerService extends ReceiverService
         $receivers = [];
         foreach ($emails as $email) {
             $rawCustomer = $this->customerRepository->getCustomerByEmail($email);
-            $receiver = (new Receiver())->fromArray($this->convertToReceiver($rawCustomer[0]));
-            $receivers[] = $receiver;
+            if (!empty($rawCustomer)) {
+                $receiver = (new Receiver())->fromArray($this->convertToReceiver($rawCustomer[0]));
+                $receivers[] = $receiver;
+            }
         }
 
         return $receivers;

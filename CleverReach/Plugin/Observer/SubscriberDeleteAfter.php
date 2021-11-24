@@ -7,8 +7,6 @@ use CleverReach\Plugin\IntegrationCore\BusinessLogic\Receiver\Tasks\Composite\Un
 use CleverReach\Plugin\IntegrationCore\BusinessLogic\TaskExecution\QueueService;
 use CleverReach\Plugin\IntegrationCore\Infrastructure\ServiceRegister;
 use CleverReach\Plugin\IntegrationCore\Infrastructure\TaskExecution\Exceptions\QueueStorageUnavailableException;
-use CleverReach\Plugin\Services\BusinessLogic\Config\CleverReachConfig;
-use CleverReach\Plugin\Services\BusinessLogic\Synchronization\CustomerService;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 
@@ -30,7 +28,6 @@ class SubscriberDeleteAfter implements ObserverInterface
     public function execute(Observer $observer)
     {
         $email = $observer->getEvent()->getSubscriber()->getEmail();
-        CleverReachConfig::setSynchronizationServices([CustomerService::class]);
         try {
             $this->getQueueService()->enqueue('authQueue', new UnsubscribeReceiverTask($email));
         } catch (QueueStorageUnavailableException $e) {

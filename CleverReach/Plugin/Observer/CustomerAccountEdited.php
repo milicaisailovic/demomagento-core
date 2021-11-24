@@ -8,8 +8,6 @@ use CleverReach\Plugin\IntegrationCore\BusinessLogic\Receiver\Tasks\Composite\Re
 use CleverReach\Plugin\IntegrationCore\BusinessLogic\TaskExecution\QueueService;
 use CleverReach\Plugin\IntegrationCore\Infrastructure\ServiceRegister;
 use CleverReach\Plugin\IntegrationCore\Infrastructure\TaskExecution\Exceptions\QueueStorageUnavailableException;
-use CleverReach\Plugin\Services\BusinessLogic\Config\CleverReachConfig;
-use CleverReach\Plugin\Services\BusinessLogic\Synchronization\CustomerService;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 
@@ -31,7 +29,6 @@ class CustomerAccountEdited implements ObserverInterface
     public function execute(Observer $observer)
     {
         $email = $observer->getEvent()->getEmail();
-        CleverReachConfig::setSynchronizationServices([CustomerService::class]);
         $task = new ReceiverSyncTask(new SyncConfiguration([$email]));
         try {
             $this->getQueueService()->enqueue('authQueue', $task);

@@ -3,12 +3,15 @@
 namespace CleverReach\Plugin\Controller\Adminhtml\Login;
 
 use CleverReach\Plugin\Bootstrap;
-use CleverReach\Plugin\IntegrationCore\BusinessLogic\Authorization\Contracts\AuthorizationService as AuthorizationServiceContract;
-use CleverReach\Plugin\IntegrationCore\BusinessLogic\Authorization\Exceptions\FailedToRefreshAccessToken;
-use CleverReach\Plugin\IntegrationCore\BusinessLogic\Authorization\Exceptions\FailedToRetrieveAuthInfoException;
-use CleverReach\Plugin\IntegrationCore\Infrastructure\ORM\Exceptions\QueryFilterInvalidParamException;
+use CleverReach\Plugin\IntegrationCore\BusinessLogic\Receiver\Contracts\SyncConfigService as SyncConfigServiceContract;
+use CleverReach\Plugin\IntegrationCore\BusinessLogic\Receiver\DTO\Config\SyncService;
+use CleverReach\Plugin\IntegrationCore\BusinessLogic\Receiver\SyncConfigService;
+use CleverReach\Plugin\IntegrationCore\BusinessLogic\TaskExecution\QueueService;
 use CleverReach\Plugin\IntegrationCore\Infrastructure\ServiceRegister;
-use CleverReach\Plugin\Services\BusinessLogic\Authorization\AuthorizationService;
+use CleverReach\Plugin\IntegrationCore\Infrastructure\TaskExecution\QueueItem;
+use CleverReach\Plugin\IntegrationCore\Infrastructure\TaskExecution\QueueService as BaseQueueService;
+use CleverReach\Plugin\Services\BusinessLogic\Synchronization\CustomerService;
+use CleverReach\Plugin\Services\BusinessLogic\Synchronization\SubscriberService;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\App\Action\HttpGetActionInterface;
@@ -49,23 +52,37 @@ class CheckLogin extends Action implements HttpGetActionInterface
     {
         $response = $this->jsonResponseFactory->create();
 
-        try {
-            $this->getAuthorizationService()->getAuthInfo();
+        $queueItem = $this->getQueueService()->findLatestByType('ConnectTask');
+        if ($queueItem !== null && $queueItem->getStatus() === QueueItem::COMPLETED) {
+            $services = [
+                new SyncService('service-' . CustomerService::class, 2, CustomerService::class),
+                new SyncService('service-' . SubscriberService::class, 1, SubscriberService::class)
+            ];
+
+            $this->getSyncConfigService()->setEnabledServices($services);
 
             return $response->setData([$this->getUrl('cleverreach/dashboard/index')]);
-
-        } catch (FailedToRefreshAccessToken | FailedToRetrieveAuthInfoException | QueryFilterInvalidParamException $e) {
-            return $response->setData([]);
         }
+
+        return $response->setData([]);
     }
 
     /**
-     * @return AuthorizationService
+     * @return QueueService
      */
-    private function getAuthorizationService(): AuthorizationService
+    private
+    function getQueueService(): BaseQueueService
     {
         /** @noinspection PhpIncompatibleReturnTypeInspection */
-        return ServiceRegister::getService(AuthorizationServiceContract::CLASS_NAME);
+        return ServiceRegister::getService(BaseQueueService::CLASS_NAME);
     }
 
+    /**
+     * @return SyncConfigService
+     */
+    private function getSyncConfigService(): SyncConfigService
+    {
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
+        return ServiceRegister::getService(SyncConfigServiceContract::CLASS_NAME);
+    }
 }

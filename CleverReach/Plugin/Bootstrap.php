@@ -3,7 +3,6 @@
 namespace CleverReach\Plugin;
 
 
-use CleverReach\BusinessLogic\Receiver\WebHooks\Handler as ReceiverHandler;
 use CleverReach\Plugin\IntegrationCore\BusinessLogic\Authorization\Contracts\AuthorizationService as AuthorizationServiceContract;
 use CleverReach\Plugin\IntegrationCore\BusinessLogic\Authorization\Http\AuthProxy;
 use CleverReach\Plugin\IntegrationCore\BusinessLogic\Authorization\Http\OauthStatusProxy;
@@ -33,8 +32,10 @@ use CleverReach\Plugin\IntegrationCore\BusinessLogic\Receiver\Events\ReceiverUpd
 use CleverReach\Plugin\IntegrationCore\BusinessLogic\Receiver\Http\Proxy as ReceiverProxy;
 use CleverReach\Plugin\IntegrationCore\BusinessLogic\Receiver\ReceiverEventsService as BaseReceiverEventsService;
 use CleverReach\Plugin\IntegrationCore\BusinessLogic\Receiver\SyncConfigService;
+use CleverReach\Plugin\IntegrationCore\BusinessLogic\Receiver\WebHooks\Handler as ReceiverHandler;
 use CleverReach\Plugin\IntegrationCore\BusinessLogic\Segment\Contracts\SegmentService as SegmentServiceContract;
 use CleverReach\Plugin\IntegrationCore\BusinessLogic\Segment\Http\Proxy as SegmentProxy;
+use CleverReach\Plugin\IntegrationCore\BusinessLogic\TaskExecution\QueueService;
 use CleverReach\Plugin\IntegrationCore\BusinessLogic\WebHookEvent\Http\Proxy as WebHookProxy;
 use CleverReach\Plugin\IntegrationCore\Infrastructure\BootstrapComponent;
 use CleverReach\Plugin\IntegrationCore\Infrastructure\Configuration\ConfigEntity;
@@ -49,7 +50,6 @@ use CleverReach\Plugin\IntegrationCore\Infrastructure\Serializer\Serializer;
 use CleverReach\Plugin\IntegrationCore\Infrastructure\ServiceRegister;
 use CleverReach\Plugin\IntegrationCore\Infrastructure\TaskExecution\Process;
 use CleverReach\Plugin\IntegrationCore\Infrastructure\TaskExecution\QueueItem;
-use CleverReach\Plugin\IntegrationCore\Infrastructure\TaskExecution\QueueService;
 use CleverReach\Plugin\Repository\BaseRepository;
 use CleverReach\Plugin\Repository\QueueItemRepository;
 use CleverReach\Plugin\Services\BusinessLogic\Authorization\AuthorizationService;
