@@ -4,9 +4,7 @@ namespace CleverReach\Plugin\Controller\Adminhtml\Login;
 
 use CleverReach\Plugin\Bootstrap;
 use CleverReach\Plugin\IntegrationCore\BusinessLogic\Authorization\Contracts\AuthorizationService as AuthorizationServiceContract;
-use CleverReach\Plugin\IntegrationCore\BusinessLogic\Authorization\Exceptions\FailedToRefreshAccessToken;
-use CleverReach\Plugin\IntegrationCore\BusinessLogic\Authorization\Exceptions\FailedToRetrieveAuthInfoException;
-use CleverReach\Plugin\IntegrationCore\Infrastructure\ORM\Exceptions\QueryFilterInvalidParamException;
+use CleverReach\Plugin\IntegrationCore\Infrastructure\Exceptions\BaseException;
 use CleverReach\Plugin\IntegrationCore\Infrastructure\ServiceRegister;
 use CleverReach\Plugin\Services\BusinessLogic\Authorization\AuthorizationService;
 use CleverReach\Plugin\Services\BusinessLogic\Config\CleverReachConfig;
@@ -49,16 +47,27 @@ class Index extends Action implements HttpGetActionInterface
     public function execute(): Page
     {
         $resultPage = $this->resultPageFactory->create();
-        try {
-            $this->getAuthorizationService()->getAuthInfo();
+        if ($this->isAuthInfoExisting()) {
             $this->_redirect('cleverreach/dashboard/index');
-
-        } catch (FailedToRefreshAccessToken | FailedToRetrieveAuthInfoException | QueryFilterInvalidParamException $e) {
         }
 
         $resultPage->setActiveMenu(CleverReachConfig::MENU_ID);
 
         return $resultPage;
+    }
+
+    /**
+     * @return bool
+     */
+    private function isAuthInfoExisting(): bool
+    {
+        try {
+            $this->getAuthorizationService()->getAuthInfo();
+
+            return true;
+        } catch (BaseException $e) {
+            return false;
+        }
     }
 
     /**

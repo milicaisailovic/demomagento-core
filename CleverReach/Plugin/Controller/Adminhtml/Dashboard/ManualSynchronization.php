@@ -49,7 +49,7 @@ class ManualSynchronization extends Action implements HttpGetActionInterface
         try {
             $this->getQueueService()->enqueue('authQueue', new ReceiverSyncTask());
         } catch (QueueStorageUnavailableException $e) {
-            $response->setHttpResponseCode(500);
+            $response->setHttpResponseCode($e->getCode());
             return $response->setData('error');
         }
 
