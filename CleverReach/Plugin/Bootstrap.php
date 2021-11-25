@@ -65,7 +65,9 @@ use CleverReach\Plugin\Services\BusinessLogic\Synchronization\ReceiverEventsServ
 use CleverReach\Plugin\Services\BusinessLogic\Synchronization\SegmentService;
 use CleverReach\Plugin\Services\BusinessLogic\Synchronization\SubscriberService;
 use CleverReach\Plugin\Services\BusinessLogic\Synchronization\TranslationService;
+use CleverReach\Plugin\Services\BusinessLogic\WebHooks\Contracts\RequestHandlerContract;
 use CleverReach\Plugin\Services\BusinessLogic\WebHooks\ReceiverWebhookHandler;
+use CleverReach\Plugin\Services\BusinessLogic\WebHooks\RequestHandler;
 use CleverReach\Plugin\Services\Infrastructure\LoggerService;
 
 class Bootstrap extends BootstrapComponent
@@ -321,6 +323,13 @@ class Bootstrap extends BootstrapComponent
             ReceiverEventBus::class,
             function () {
                 return ReceiverEventBus::getInstance();
+            }
+        );
+
+        ServiceRegister::registerService(
+            RequestHandlerContract::class,
+            function () {
+                return new RequestHandler();
             }
         );
     }

@@ -3,11 +3,9 @@
 namespace CleverReach\Plugin\Controller\Event;
 
 use CleverReach\Plugin\IntegrationCore\BusinessLogic\Receiver\ReceiverEventsService as ReceiverEventsServiceAlias;
-use CleverReach\Plugin\IntegrationCore\BusinessLogic\Receiver\WebHooks\Handler;
-use CleverReach\Plugin\IntegrationCore\BusinessLogic\WebHookEvent\DTO\WebHook;
-use CleverReach\Plugin\IntegrationCore\BusinessLogic\WebHookEvent\Exceptions\UnableToHandleWebHookException;
 use CleverReach\Plugin\IntegrationCore\Infrastructure\ServiceRegister;
 use CleverReach\Plugin\Services\BusinessLogic\Synchronization\ReceiverEventsService;
+use CleverReach\Plugin\Services\BusinessLogic\WebHooks\RequestHandler;
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\App\CsrfAwareActionInterface;
@@ -39,27 +37,15 @@ class ReceiverWebHook extends Action implements CsrfAwareActionInterface
     public function execute(): ResultInterface
     {
         $result = $this->resultFactory->create(ResultFactory::TYPE_RAW);
-
         $method = $this->_request->getMethod();
         if ($method === 'GET') {
-            $secret = $this->getRequest()->getParam('secret');
-            $token = $this->getEventsService()->getVerificationToken() . ' ' . $secret;
-
-            $result->setHeader('Content-Type', 'text/plain')
-                ->setContents($token)
-                ->setHttpResponseCode(200);
+            $result = $this->getRequestHandler()->prepareResponse($this->getEventsService(), $this->getRequest(), $result);
         }
 
         if ($method === 'POST') {
             $requestBody = $this->getRequest()->getContent();
             $decodedBody = json_decode($requestBody, true);
-            $hook = new WebHook($decodedBody['condition'], $decodedBody['event'], $decodedBody['payload']);
-            try {
-                $this->getReceiverWebhookHandler()->handle($hook);
-                $result->setHttpResponseCode(200);
-            } catch (UnableToHandleWebHookException $e) {
-                $result->setHttpResponseCode($e->getCode())->setContents('Error handling webhook.');
-            }
+            $result = $this->getRequestHandler()->callWebhookHandler($decodedBody, $result);
         }
 
         return $result;
@@ -85,11 +71,11 @@ class ReceiverWebHook extends Action implements CsrfAwareActionInterface
     }
 
     /**
-     * @return Handler
+     * @return RequestHandler
      */
-    private function getReceiverWebhookHandler(): Handler
+    private function getRequestHandler(): RequestHandler
     {
         /** @noinspection PhpIncompatibleReturnTypeInspection */
-        return ServiceRegister::getService(Handler::class);
+        return ServiceRegister::getService(RequestHandler::class);
     }
 }
