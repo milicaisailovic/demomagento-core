@@ -9,6 +9,7 @@ use CleverReach\Plugin\IntegrationCore\Infrastructure\ServiceRegister;
 use CleverReach\Plugin\IntegrationCore\Infrastructure\TaskExecution\Exceptions\QueueStorageUnavailableException;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
+use Magento\Newsletter\Model\Subscriber;
 
 class SaveSubscriber implements ObserverInterface
 {
@@ -20,8 +21,8 @@ class SaveSubscriber implements ObserverInterface
     public function execute(Observer $observer)
     {
         $subscriber = $observer->getEvent()->getSubscriber();
-        $task = $subscriber->getSubscriberStatus() === 1 ? new SubscribeReceiverTask($subscriber->getEmail())
-            : new UnsubscribeReceiverTask($subscriber->getEmail());
+        $task = $subscriber->getSubscriberStatus() === Subscriber::STATUS_SUBSCRIBED ?
+            new SubscribeReceiverTask($subscriber->getEmail()) : new UnsubscribeReceiverTask($subscriber->getEmail());
         try {
             $this->getQueueService()->enqueue('syncQueue', $task);
         } catch (QueueStorageUnavailableException $e) {
