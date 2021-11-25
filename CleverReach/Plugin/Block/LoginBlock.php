@@ -2,7 +2,6 @@
 
 namespace CleverReach\Plugin\Block;
 
-use CleverReach\Plugin\Bootstrap;
 use CleverReach\Plugin\IntegrationCore\BusinessLogic\Authorization\Contracts\AuthorizationService as AuthorizationServiceAlias;
 use CleverReach\Plugin\IntegrationCore\Infrastructure\Configuration\Configuration;
 use CleverReach\Plugin\IntegrationCore\Infrastructure\ServiceRegister;
@@ -26,8 +25,6 @@ class LoginBlock extends Template
     )
     {
         parent::__construct($context, $data);
-
-        Bootstrap::init();
     }
 
     /**

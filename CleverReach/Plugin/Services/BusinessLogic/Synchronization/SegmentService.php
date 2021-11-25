@@ -8,13 +8,6 @@ use CleverReach\Plugin\IntegrationCore\BusinessLogic\Segment\SegmentService as B
 class SegmentService extends BaseSegmentService
 {
     /**
-     * SegmentService constructor.
-     */
-    public function __construct()
-    {
-    }
-
-    /**
      * Retrieves list of available segments.
      *
      * @return Segment[] The list of available segments.

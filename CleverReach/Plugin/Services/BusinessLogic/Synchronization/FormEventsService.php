@@ -7,13 +7,6 @@ use CleverReach\Plugin\IntegrationCore\BusinessLogic\Form\FormEventsService as B
 class FormEventsService extends BaseFormEventsService
 {
     /**
-     * FormEventsService constructor.
-     */
-    public function __construct()
-    {
-    }
-
-    /**
      * Provides url that will listen to web hook requests.
      *
      * @return string

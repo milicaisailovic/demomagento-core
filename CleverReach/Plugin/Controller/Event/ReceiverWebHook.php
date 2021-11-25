@@ -2,13 +2,13 @@
 
 namespace CleverReach\Plugin\Controller\Event;
 
-use CleverReach\Plugin\Bootstrap;
 use CleverReach\Plugin\IntegrationCore\BusinessLogic\Receiver\ReceiverEventsService as ReceiverEventsServiceAlias;
 use CleverReach\Plugin\IntegrationCore\BusinessLogic\Receiver\WebHooks\Handler;
 use CleverReach\Plugin\IntegrationCore\BusinessLogic\WebHookEvent\DTO\WebHook;
 use CleverReach\Plugin\IntegrationCore\BusinessLogic\WebHookEvent\Exceptions\UnableToHandleWebHookException;
 use CleverReach\Plugin\IntegrationCore\Infrastructure\ServiceRegister;
 use CleverReach\Plugin\Services\BusinessLogic\Synchronization\ReceiverEventsService;
+use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\App\CsrfAwareActionInterface;
 use Magento\Framework\App\Request\InvalidRequestException;
@@ -16,7 +16,7 @@ use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\Controller\ResultInterface;
 
-class ReceiverWebHook extends \Magento\Framework\App\Action\Action implements CsrfAwareActionInterface
+class ReceiverWebHook extends Action implements CsrfAwareActionInterface
 {
     /**
      * ReceiverWebHook controller constructor.
@@ -28,8 +28,6 @@ class ReceiverWebHook extends \Magento\Framework\App\Action\Action implements Cs
     )
     {
         parent::__construct($context);
-
-        Bootstrap::init();
     }
 
     /**
@@ -60,7 +58,7 @@ class ReceiverWebHook extends \Magento\Framework\App\Action\Action implements Cs
                 $this->getReceiverWebhookHandler()->handle($hook);
                 $result->setHttpResponseCode(200);
             } catch (UnableToHandleWebHookException $e) {
-                $result->setHttpResponseCode(500)->setContents('Error handling webhook.');
+                $result->setHttpResponseCode($e->getCode())->setContents('Error handling webhook.');
             }
         }
 

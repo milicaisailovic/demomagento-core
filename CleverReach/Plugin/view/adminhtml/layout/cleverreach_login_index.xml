@@ -3,7 +3,7 @@
     <head>
         <css src="CleverReach_Plugin::css/landingPage.css"/>
         <script src="CleverReach_Plugin::js/AjaxService.js"/>
-        <script src="CleverReach_Plugin::js/Login.js"/>
+        <script src="CleverReach_Plugin::js/LoginService.js"/>
     </head>
     <body>
     <referenceContainer name="content">

@@ -2,11 +2,11 @@
 
 namespace CleverReach\Plugin\Controller\Adminhtml\Dashboard;
 
-use CleverReach\Plugin\Bootstrap;
 use CleverReach\Plugin\IntegrationCore\BusinessLogic\InitialSynchronization\Tasks\Composite\InitialSyncTask;
 use CleverReach\Plugin\IntegrationCore\BusinessLogic\TaskExecution\QueueService;
+use CleverReach\Plugin\IntegrationCore\Infrastructure\Exceptions\BaseException;
+use CleverReach\Plugin\IntegrationCore\Infrastructure\Logger\Logger;
 use CleverReach\Plugin\IntegrationCore\Infrastructure\ServiceRegister;
-use CleverReach\Plugin\IntegrationCore\Infrastructure\TaskExecution\Exceptions\QueueStorageUnavailableException;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\App\Action\HttpGetActionInterface;
@@ -30,8 +30,6 @@ class Synchronization extends Action implements HttpGetActionInterface
     {
         parent::__construct($context);
 
-        Bootstrap::init();
-
         $this->jsonResponseFactory = $jsonFactory;
     }
 
@@ -45,13 +43,13 @@ class Synchronization extends Action implements HttpGetActionInterface
         $response = $this->jsonResponseFactory->create();
 
         try {
-            $this->getQueueService()->enqueue('authQueue', new InitialSyncTask());
-        } catch (QueueStorageUnavailableException $e) {
-            $response->setHttpResponseCode(500);
-            return $response->setData('Queue storage is unavailable');
+            $this->getQueueService()->enqueue('syncQueue', new InitialSyncTask());
+        } catch (BaseException $e) {
+            Logger::logError('Dashboard\Synchronization controller. ' . $e->getMessage());
+            return $response->setData($e->getMessage());
         }
 
-        return $response->setData([]);
+        return $response->setData(['success' => true]);
     }
 
     /**

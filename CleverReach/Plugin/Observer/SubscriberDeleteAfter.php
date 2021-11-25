@@ -2,7 +2,6 @@
 
 namespace CleverReach\Plugin\Observer;
 
-use CleverReach\Plugin\Bootstrap;
 use CleverReach\Plugin\IntegrationCore\BusinessLogic\Receiver\Tasks\Composite\UnsubscribeReceiverTask;
 use CleverReach\Plugin\IntegrationCore\BusinessLogic\TaskExecution\QueueService;
 use CleverReach\Plugin\IntegrationCore\Infrastructure\ServiceRegister;
@@ -13,14 +12,6 @@ use Magento\Framework\Event\ObserverInterface;
 class SubscriberDeleteAfter implements ObserverInterface
 {
     /**
-     * CustomerDeleteAfter constructor.
-     */
-    public function __construct()
-    {
-        Bootstrap::init();
-    }
-
-    /**
      * Enqueue UnsubscribeReceiverTask when customer is deleted in shop.
      *
      * @param Observer $observer
@@ -29,7 +20,7 @@ class SubscriberDeleteAfter implements ObserverInterface
     {
         $email = $observer->getEvent()->getSubscriber()->getEmail();
         try {
-            $this->getQueueService()->enqueue('authQueue', new UnsubscribeReceiverTask($email));
+            $this->getQueueService()->enqueue('syncQueue', new UnsubscribeReceiverTask($email));
         } catch (QueueStorageUnavailableException $e) {
         }
     }

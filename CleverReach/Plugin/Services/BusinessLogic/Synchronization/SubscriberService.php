@@ -55,12 +55,9 @@ class SubscriberService extends ReceiverService
     public function getReceiverBatch(array $emails, $isServiceSpecificDataRequired = false): array
     {
         $receivers = [];
-        foreach ($emails as $email) {
-            $rawSubscriber = $this->subscriberRepository->getSubscriberByEmail($email);
-            if (!empty($rawSubscriber)) {
-                $receiver = (new Receiver())->fromArray($this->convertToReceiver($rawSubscriber[0]));
-                $receivers[] = $receiver;
-            }
+        $rawReceivers = $this->subscriberRepository->getBatchOfSubscribers($emails);
+        foreach ($rawReceivers as $receiver) {
+            $receivers[] = Receiver::fromArray($this->convertToReceiver($receiver));
         }
 
         return $receivers;

@@ -2,7 +2,6 @@
 
 namespace CleverReach\Plugin\Observer;
 
-use CleverReach\Plugin\Bootstrap;
 use CleverReach\Plugin\IntegrationCore\BusinessLogic\Receiver\Tasks\Composite\Configuration\SyncConfiguration;
 use CleverReach\Plugin\IntegrationCore\BusinessLogic\Receiver\Tasks\Composite\ReceiverSyncTask;
 use CleverReach\Plugin\IntegrationCore\BusinessLogic\TaskExecution\QueueService;
@@ -14,14 +13,6 @@ use Magento\Framework\Event\ObserverInterface;
 class CustomerAccountEdited implements ObserverInterface
 {
     /**
-     * CustomerAccountEdited constructor.
-     */
-    public function __construct()
-    {
-        Bootstrap::init();
-    }
-
-    /**
      * Edit receiver on API when customer updates his information.
      *
      * @param Observer $observer
@@ -31,7 +22,7 @@ class CustomerAccountEdited implements ObserverInterface
         $email = $observer->getEvent()->getEmail();
         $task = new ReceiverSyncTask(new SyncConfiguration([$email]));
         try {
-            $this->getQueueService()->enqueue('authQueue', $task);
+            $this->getQueueService()->enqueue('syncQueue', $task);
         } catch (QueueStorageUnavailableException $e) {
         }
     }

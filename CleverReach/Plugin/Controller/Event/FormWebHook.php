@@ -2,7 +2,6 @@
 
 namespace CleverReach\Plugin\Controller\Event;
 
-use CleverReach\Plugin\Bootstrap;
 use CleverReach\Plugin\IntegrationCore\BusinessLogic\Form\FormEventsService as FormEventsServiceAlias;
 use CleverReach\Plugin\IntegrationCore\Infrastructure\ServiceRegister;
 use CleverReach\Plugin\Services\BusinessLogic\Synchronization\FormEventsService;
@@ -22,7 +21,6 @@ class FormWebHook extends Action
     )
     {
         parent::__construct($context);
-        Bootstrap::init();
     }
 
     /**

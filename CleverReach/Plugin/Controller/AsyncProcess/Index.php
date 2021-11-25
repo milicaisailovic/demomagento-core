@@ -2,7 +2,6 @@
 
 namespace CleverReach\Plugin\Controller\AsyncProcess;
 
-use CleverReach\Plugin\Bootstrap;
 use CleverReach\Plugin\IntegrationCore\Infrastructure\ServiceRegister;
 use CleverReach\Plugin\IntegrationCore\Infrastructure\TaskExecution\AsyncProcessStarterService;
 use CleverReach\Plugin\IntegrationCore\Infrastructure\TaskExecution\Interfaces\AsyncProcessService;
@@ -31,8 +30,6 @@ class Index extends Action
     )
     {
         parent::__construct($context);
-
-        Bootstrap::init();
 
         $this->resultJsonFactory = $resultJsonFactory;
     }

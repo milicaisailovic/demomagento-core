@@ -45,16 +45,15 @@ class SubscriberRepository
     }
 
     /**
-     * Get subscriber with forwarded email.
+     * Get batch of subscribers from database based on array of emails.
      *
-     * @param string $email
-     *
-     * @return array|null
+     * @param array $emails
+     * @return array
      */
-    public function getSubscriberByEmail(string $email): ?array
+    public function getBatchOfSubscribers(array $emails): array
     {
         $customerCollection = $this->collectionFactory->create();
-        $customerCollection->addFieldToFilter('subscriber_email', ['eq' => $email]);
+        $customerCollection->addFieldToFilter('subscriber_email', array('in' => $emails));
 
         return $customerCollection->getData();
     }

@@ -2,7 +2,6 @@
 
 namespace CleverReach\Plugin\Controller\Adminhtml\Login;
 
-use CleverReach\Plugin\Bootstrap;
 use CleverReach\Plugin\IntegrationCore\BusinessLogic\Receiver\Contracts\SyncConfigService as SyncConfigServiceContract;
 use CleverReach\Plugin\IntegrationCore\BusinessLogic\Receiver\DTO\Config\SyncService;
 use CleverReach\Plugin\IntegrationCore\BusinessLogic\Receiver\SyncConfigService;
@@ -38,8 +37,6 @@ class CheckLogin extends Action implements HttpGetActionInterface
     {
         parent::__construct($context);
 
-        Bootstrap::init();
-
         $this->jsonResponseFactory = $jsonResponseFactory;
     }
 
@@ -60,11 +57,12 @@ class CheckLogin extends Action implements HttpGetActionInterface
             ];
 
             $this->getSyncConfigService()->setEnabledServices($services);
+            $this->_redirect('cleverreach/dashboard/synchronization');
 
-            return $response->setData([$this->getUrl('cleverreach/dashboard/index')]);
+            return $response->setData(['success' => true, 'url' => $this->getUrl('cleverreach/dashboard/index')]);
         }
 
-        return $response->setData([]);
+        return $response->setData(['success' => false]);
     }
 
     /**

@@ -2,7 +2,6 @@
 
 namespace CleverReach\Plugin\Controller\Adminhtml\Login;
 
-use CleverReach\Plugin\Bootstrap;
 use CleverReach\Plugin\IntegrationCore\BusinessLogic\Authorization\Contracts\AuthorizationService as AuthorizationServiceContract;
 use CleverReach\Plugin\IntegrationCore\Infrastructure\Exceptions\BaseException;
 use CleverReach\Plugin\IntegrationCore\Infrastructure\ServiceRegister;
@@ -33,8 +32,6 @@ class Index extends Action implements HttpGetActionInterface
     )
     {
         parent::__construct($context);
-
-        Bootstrap::init();
 
         $this->resultPageFactory = $resultPageFactory;
     }

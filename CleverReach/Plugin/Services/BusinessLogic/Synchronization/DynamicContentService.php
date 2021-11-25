@@ -8,13 +8,6 @@ use CleverReach\Plugin\IntegrationCore\BusinessLogic\DynamicContent\DynamicConte
 class DynamicContentService extends BaseDynamicContentService
 {
     /**
-     * DynamicContentService constructor.
-     */
-    public function __construct()
-    {
-    }
-
-    /**
      * Return list of supported contents
      *
      * @return DynamicContent[]

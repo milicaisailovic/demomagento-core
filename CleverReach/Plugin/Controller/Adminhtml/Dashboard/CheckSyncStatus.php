@@ -2,11 +2,10 @@
 
 namespace CleverReach\Plugin\Controller\Adminhtml\Dashboard;
 
-use CleverReach\Plugin\Bootstrap;
 use CleverReach\Plugin\IntegrationCore\BusinessLogic\TaskExecution\QueueService;
 use CleverReach\Plugin\IntegrationCore\Infrastructure\ServiceRegister;
 use CleverReach\Plugin\IntegrationCore\Infrastructure\TaskExecution\QueueItem;
-use CleverReach\Plugin\IntegrationCore\Infrastructure\TaskExecution\QueueService as BaseQueueService;
+use CleverReach\Plugin\IntegrationCore\BusinessLogic\TaskExecution\QueueService as BaseQueueService;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\App\Action\HttpGetActionInterface;
@@ -33,8 +32,6 @@ class CheckSyncStatus extends Action implements HttpGetActionInterface
     {
         parent::__construct($context);
 
-        Bootstrap::init();
-
         $this->jsonResponseFactory = $jsonResponseFactory;
     }
 
@@ -46,27 +43,44 @@ class CheckSyncStatus extends Action implements HttpGetActionInterface
     public function execute(): Json
     {
         $response = $this->jsonResponseFactory->create();
-        $queueItem = $this->getQueueService()->findLatestByType('InitialSyncTask');
-        if ($queueItem === null) {
+        $initialSync = $this->getLatestQueueItemByType('InitialSyncTask');
+        $receiverSync = $this->getLatestQueueItemByType('ReceiverSyncTask');
+        if ($initialSync === null) {
             return $response->setData('error');
         }
 
-        if ($queueItem->getStatus() !== QueueItem::COMPLETED) {
-            return $response->setData($queueItem->getStatus());
+        if (!$this->isInitialSyncCompletedAndReceiverSyncExists($initialSync, $receiverSync)) {
+            return $response->setData($initialSync->getStatus());
         }
 
-        $queueItem = $this->getQueueService()->findLatestByType('ReceiverSyncTask');
-        if ($queueItem === null) {
-            return $response->setData(QueueItem::COMPLETED);
-        }
+        return $response->setData($receiverSync->getStatus());
+    }
 
-        return $response->setData($queueItem->getStatus());
+    /**
+     * @param string $type
+     *
+     * @return QueueItem|null
+     */
+    private function getLatestQueueItemByType(string $type): ?QueueItem
+    {
+        return $this->getQueueService()->findLatestByType($type);
+    }
+
+    /**
+     * @param QueueItem $initialSync
+     * @param QueueItem|null $receiverSync
+     *
+     * @return bool
+     */
+    private function isInitialSyncCompletedAndReceiverSyncExists(QueueItem $initialSync, ?QueueItem $receiverSync): bool
+    {
+        return $initialSync->getStatus() === QueueItem::COMPLETED && $receiverSync !== null;
     }
 
     /**
      * @return QueueService
      */
-    private function getQueueService(): BaseQueueService
+    private function getQueueService(): QueueService
     {
         /** @noinspection PhpIncompatibleReturnTypeInspection */
         return ServiceRegister::getService(BaseQueueService::CLASS_NAME);

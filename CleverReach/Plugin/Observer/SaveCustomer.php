@@ -2,7 +2,6 @@
 
 namespace CleverReach\Plugin\Observer;
 
-use CleverReach\Plugin\Bootstrap;
 use CleverReach\Plugin\IntegrationCore\BusinessLogic\Receiver\Tasks\Composite\Configuration\SyncConfiguration;
 use CleverReach\Plugin\IntegrationCore\BusinessLogic\Receiver\Tasks\Composite\ReceiverSyncTask;
 use CleverReach\Plugin\IntegrationCore\BusinessLogic\TaskExecution\QueueService;
@@ -14,14 +13,6 @@ use Magento\Framework\Event\ObserverInterface;
 class SaveCustomer implements ObserverInterface
 {
     /**
-     * SaveCustomer observer constructor.
-     */
-    public function __construct()
-    {
-        Bootstrap::init();
-    }
-
-    /**
      * Save new or edited customer on API.
      *
      * @param Observer $observer
@@ -32,7 +23,7 @@ class SaveCustomer implements ObserverInterface
 
         $task = new ReceiverSyncTask(new SyncConfiguration([$customer->getEmail()]));
         try {
-            $this->getQueueService()->enqueue('authQueue', $task);
+            $this->getQueueService()->enqueue('syncQueue', $task);
         } catch (QueueStorageUnavailableException $e) {
         }
     }

@@ -7,13 +7,6 @@ use CleverReach\Plugin\IntegrationCore\BusinessLogic\Group\GroupService as BaseG
 class GroupService extends BaseGroupService
 {
     /**
-     * GroupService constructor.
-     */
-    public function __construct()
-    {
-    }
-
-    /**
      * Retrieves integration specific group name.
      *
      * @return string Integration provided group name.

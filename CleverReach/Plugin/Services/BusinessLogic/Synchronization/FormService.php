@@ -7,13 +7,6 @@ use CleverReach\Plugin\IntegrationCore\BusinessLogic\Form\FormService as BaseFor
 class FormService extends BaseFormService
 {
     /**
-     * FormService constructor.
-     */
-    public function __construct()
-    {
-    }
-
-    /**
      * Retrieves the integration's default form name.
      *
      * @return string

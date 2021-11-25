@@ -5,8 +5,7 @@
         <css src="CleverReach_Plugin::css/landingPage.css"/>
         <css src="CleverReach_Plugin::css/dashboard.css"/>
         <script src="CleverReach_Plugin::js/AjaxService.js"/>
-        <script src="CleverReach_Plugin::js/Synchronization.js"/>
-        <script src="CleverReach_Plugin::js/ManualSynchronization.js"/>
+        <script src="CleverReach_Plugin::js/SynchronizationService.js"/>
     </head>
     <body>
         <referenceContainer name="content">

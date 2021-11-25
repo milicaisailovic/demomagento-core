@@ -2,7 +2,6 @@
 
 namespace CleverReach\Plugin\Repository;
 
-use Magento\Customer\Model\Customer;
 use Magento\Customer\Model\ResourceModel\Customer\CollectionFactory;
 
 class CustomerRepository
@@ -13,33 +12,26 @@ class CustomerRepository
     private $customerFactory;
 
     /**
-     * @var Customer
-     */
-    private $customer;
-
-    /**
      * CustomerRepository constructor.
      */
     public function __construct(
-        CollectionFactory $customerFactory,
-        Customer          $customer
+        CollectionFactory $customerFactory
     )
     {
         $this->customerFactory = $customerFactory;
-        $this->customer = $customer;
     }
 
     /**
-     * Get customer from database by email.
+     * Get batch of customers from database based on array of emails.
      *
-     * @param string $email
+     * @param array $emails
      *
      * @return array
      */
-    public function getCustomerByEmail(string $email): array
+    public function getBatchOfCustomers(array $emails): array
     {
         $customerCollection = $this->customerFactory->create();
-        $customerCollection->addFieldToFilter('email', ['eq' => $email]);
+        $customerCollection->addFieldToFilter('email', array('in' => $emails));
 
         return $customerCollection->getData();
     }

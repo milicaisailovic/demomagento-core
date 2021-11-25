@@ -8,13 +8,6 @@ use CleverReach\Plugin\IntegrationCore\BusinessLogic\Mailing\DTO\MailingContent;
 class MailingService implements DefaultMailingService
 {
     /**
-     * MailingService constructor.
-     */
-    public function __construct()
-    {
-    }
-
-    /**
      * Provides default mailing name.
      *
      * @return string Default mailing name.

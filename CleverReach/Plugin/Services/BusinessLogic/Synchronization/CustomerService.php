@@ -41,7 +41,7 @@ class CustomerService extends ReceiverService
             return null;
         }
 
-        return (new Receiver())->fromArray($this->convertToReceiver($rawCustomer[0]));
+        return Receiver::fromArray($this->convertToReceiver($rawCustomer[0]));
     }
 
     /**
@@ -55,12 +55,9 @@ class CustomerService extends ReceiverService
     public function getReceiverBatch(array $emails, $isServiceSpecificDataRequired = false): array
     {
         $receivers = [];
-        foreach ($emails as $email) {
-            $rawCustomer = $this->customerRepository->getCustomerByEmail($email);
-            if (!empty($rawCustomer)) {
-                $receiver = (new Receiver())->fromArray($this->convertToReceiver($rawCustomer[0]));
-                $receivers[] = $receiver;
-            }
+        $rawReceivers = $this->customerRepository->getBatchOfCustomers($emails);
+        foreach ($rawReceivers as $receiver) {
+            $receivers[] = Receiver::fromArray($this->convertToReceiver($receiver));
         }
 
         return $receivers;

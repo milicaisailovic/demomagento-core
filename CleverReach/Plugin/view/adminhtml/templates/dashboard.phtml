@@ -17,12 +17,10 @@
         <div class="statusProgress" id="statusValue">In progress</div>
     </div>
     <div class="buttonDiv">
-        <button class="connectButton" onclick="manualSync()"> Synchronize</button>
+        <button class="connectButton" onclick="Demomagento.syncService.manualSync()"> Synchronize</button>
     </div>
 </div>
 <input type="hidden" value="<?= $block->getSynchronizationUrl(); ?>" id="syncUrl">
 <input type="hidden" value="<?= $block->getSyncStatusUrl(); ?>" id="checkSyncUrl">
 <input type="hidden" value="<?= $block->getManualSynchronizationUrl(); ?>" id="manualSyncUrl">
-<script>
-    window.onload = initialSync();
-</script>
+

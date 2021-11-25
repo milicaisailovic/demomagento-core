@@ -25,4 +25,8 @@
         <observer name="cleverreach_newsletter_subscriber_delete_after"
                   instance="CleverReach\Plugin\Observer\SubscriberDeleteAfter"/>
     </event>
+    <event name="controller_action_predispatch">
+        <observer name="cleverreach_controller_action_predispatch"
+                  instance="CleverReach\Plugin\Observer\ServiceInit"/>
+    </event>
 </config>

@@ -6,10 +6,4 @@ use CleverReach\Plugin\IntegrationCore\BusinessLogic\Field\FieldService as BaseF
 
 class FieldService extends BaseFieldService
 {
-    /**
-     * FieldService constructor.
-     */
-    public function __construct()
-    {
-    }
 }

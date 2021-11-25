@@ -7,13 +7,6 @@ use CleverReach\Plugin\IntegrationCore\BusinessLogic\Receiver\ReceiverEventsServ
 class ReceiverEventsService extends BaseReceiverEventsService
 {
     /**
-     * ReceiverEventsService constructor.
-     */
-    public function __construct()
-    {
-    }
-
-    /**
      * Provides url that will listen to web hook requests.
      *
      * @return string

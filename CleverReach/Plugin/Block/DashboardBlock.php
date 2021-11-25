@@ -2,10 +2,8 @@
 
 namespace CleverReach\Plugin\Block;
 
-use CleverReach\Plugin\Bootstrap;
 use CleverReach\Plugin\IntegrationCore\BusinessLogic\Authorization\Contracts\AuthorizationService as AuthorizationServiceContract;
-use CleverReach\Plugin\IntegrationCore\BusinessLogic\Authorization\Exceptions\FailedToRetrieveUserInfoException;
-use CleverReach\Plugin\IntegrationCore\Infrastructure\ORM\Exceptions\QueryFilterInvalidParamException;
+use CleverReach\Plugin\IntegrationCore\Infrastructure\Exceptions\BaseException;
 use CleverReach\Plugin\IntegrationCore\Infrastructure\ServiceRegister;
 use CleverReach\Plugin\Services\BusinessLogic\Authorization\AuthorizationService;
 use Magento\Backend\Block\Template\Context;
@@ -25,8 +23,6 @@ class DashboardBlock extends Template
     )
     {
         parent::__construct($context, $data);
-
-        Bootstrap::init();
     }
 
     /**
@@ -38,7 +34,7 @@ class DashboardBlock extends Template
     {
         try {
             return $this->getAuthorizationService()->getUserInfo()->getId();
-        } catch (FailedToRetrieveUserInfoException | QueryFilterInvalidParamException $e) {
+        } catch (BaseException $e) {
             return '0';
         }
     }
