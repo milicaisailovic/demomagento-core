@@ -1,0 +1,61 @@
+name: Create Tag, Release, and Upload ZIP
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+
+jobs:
+  create-release:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # needed to push tags
+
+      - name: Set variables
+        id: vars
+        run: |
+          echo "version=${{ secrets.PLUGIN_VERSION }}" >> $GITHUB_OUTPUT
+          echo "tag=v${{ secrets.PLUGIN_VERSION }}" >> $GITHUB_OUTPUT
+
+      - name: Create Git tag
+        run: |
+          git config user.name "Worldline-Plugins-1"
+          git config user.email "dev+worldlineplugins@logeecom.com"
+          git tag -a "${{ steps.vars.outputs.tag }}" -m "Release ${{ steps.vars.outputs.version }}"
+          git push origin "${{ steps.vars.outputs.tag }}"
+
+      - name: Run build script
+        run: |
+#          chmod +x ./build.sh
+#          ./build.sh
+
+      - name: Create ZIP file
+        run: |
+          mkdir -p dist
+#          zip -r dist/plugin-${{ steps.vars.outputs.version }}.zip ./build-output-folder
+        # Replace ./build-output-folder with your actual build output path
+
+      - name: Create GitHub Release
+        id: create_release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.vars.outputs.tag }}
+          name: Release ${{ steps.vars.outputs.version }}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+#      - name: Upload ZIP to Release
+#        uses: softprops/action-gh-release@v2
+#        with:
+#          tag_name: ${{ steps.vars.outputs.tag }}
+#          files: dist/plugin-${{ steps.vars.outputs.version }}.zip
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
