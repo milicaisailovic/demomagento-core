@@ -6,6 +6,9 @@ on:
     branches:
       - main
 
+env:
+  PLUGIN_VERSION: ${{ env.PLUGIN_VERSION }} # Expecting it to be passed when triggering the workflow
+
 jobs:
   create-release:
     if: github.event.pull_request.merged == true
@@ -20,8 +23,12 @@ jobs:
       - name: Set variables
         id: vars
         run: |
-          echo "version=${{ secrets.PLUGIN_VERSION }}" >> $GITHUB_OUTPUT
-          echo "tag=v${{ secrets.PLUGIN_VERSION }}" >> $GITHUB_OUTPUT
+          if [ -z "${PLUGIN_VERSION}" ]; then
+            echo "PLUGIN_VERSION is not set in environment."
+            exit 1
+          fi
+          echo "version=${PLUGIN_VERSION}" >> $GITHUB_OUTPUT
+          echo "tag=v${PLUGIN_VERSION}" >> $GITHUB_OUTPUT
 
       - name: Create Git tag
         run: |
