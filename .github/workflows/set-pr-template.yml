@@ -1,0 +1,41 @@
+name: Set PR Template Based on Target Branch
+
+on:
+  pull_request:
+    types: [opened]
+
+jobs:
+  set-template:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check PR target branch
+        id: branch
+        run: echo "branch=${GITHUB_BASE_REF}" >> $GITHUB_OUTPUT
+
+      - name: Set PR body for development/hotfix
+        if: startsWith(github.base_ref, 'development') || startsWith(github.base_ref, 'hotfix')
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const body = fs.readFileSync('.github/PULL_REQUEST_TEMPLATE/development_or_hotfix.md', 'utf8');
+            github.rest.pulls.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number,
+              body: body
+            });
+
+      - name: Set PR body for main
+        if: github.base_ref == 'main'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const body = fs.readFileSync('.github/PULL_REQUEST_TEMPLATE/main_release.md', 'utf8');
+            github.rest.pulls.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number,
+              body: body
+            });
