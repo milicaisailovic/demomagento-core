@@ -7,7 +7,7 @@ if [[ -d ./magento-coding-standard/ ]]; then
 fi
 
 composer create-project magento/magento-coding-standard --stability=dev magento-coding-standard
-
+composer create-project magento/magento-coding-standard --stability=dev magento-coding-standard
 echo -e "\e[32mSTEP 2:\e[39m Running code fixer..."
 magento-coding-standard/vendor/bin/phpcbf ./CleverReach/Plugin/ --standard=Magento2
 
