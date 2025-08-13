@@ -1,6 +1,18 @@
-## 🚀 Release Preparation Checklist
-- [ ] Tested in pre-prod environment
-- [ ] Approved by Worldline
+## 🧑‍💻 Developer Checklist
+- [ ] Run unit tests
+- [ ] Test in local environment
 
-**Release version:**
-<!-- e.g., 1.2.3 -->
+**Test description:**
+<!-- Describe your test here -->
+
+**Link to the ticket (if hotfix)**:
+<!-- paste link here -->
+
+**Link to the documentation (if development)**:
+<!-- paste link here -->
+
+---
+
+## 🔍 Reviewer Checklist
+- [ ] Code review
+- [ ] Test in environment
