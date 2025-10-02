@@ -1,4 +1,6 @@
-## 🧑‍💻 Developer Checklist
+## 🎯 Develop Branch (staging environment)
+
+### 🧑‍💻 Developer Checklist
 - [ ] Test in local environment
 
 **Test description:**
@@ -7,6 +9,6 @@
 **Link to the documentation**:
 <!-- paste link here -->
 
-## 🔍 Reviewer Checklist
+### 🔍 Reviewer Checklist
 - [ ] Code review passed
 - [ ] Checked documentation and verified test description based on it
