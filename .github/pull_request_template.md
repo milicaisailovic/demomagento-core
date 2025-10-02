@@ -3,8 +3,8 @@
 This repository has different requirements depending on the target branch.  
 Click on `Preview` window and fill out the correct template based on your PR’s destination branch:
 
-- 👉 [Development template](?expand=1&development.md)
-- 👉 [Hotfix template](?expand=1&hotfix.md)
+- 👉 [Development template](?expand=1&template=development.md)
+- 👉 [Hotfix template](?expand=1&template=hotfix.md)
 
 ---
 
