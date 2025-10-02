@@ -15,3 +15,6 @@ echo -e "\e[32mSTEP 3:\e[39m Running code sniffer..."
 magento-coding-standard/vendor/bin/phpcs ./CleverReach/Plugin/ --standard=Magento2 --severity=10
 
 echo -e "\e[32mDONE!\n\n\e[93mIf the last step produced any output, review it before making a package!"
+
+
+echo "promene"
